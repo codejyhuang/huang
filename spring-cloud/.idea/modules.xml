@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/microservice-consumer-movie-fegin/microservice-consumer-movie-fegin.iml" filepath="$PROJECT_DIR$/microservice-consumer-movie-fegin/microservice-consumer-movie-fegin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/microservice-consumer-movie-feign-customizing/microservice-consumer-movie-feign-customizing.iml" filepath="$PROJECT_DIR$/microservice-consumer-movie-feign-customizing/microservice-consumer-movie-feign-customizing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/microservice-consumer-movie-ribbon/microservice-consumer-movie-ribbon.iml" filepath="$PROJECT_DIR$/microservice-consumer-movie-ribbon/microservice-consumer-movie-ribbon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/microservice-discovery-eureka/microservice-discovery-eureka.iml" filepath="$PROJECT_DIR$/microservice-discovery-eureka/microservice-discovery-eureka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/microservice-provider-user/microservice-provider-user.iml" filepath="$PROJECT_DIR$/microservice-provider-user/microservice-provider-user.iml" />
+      <module fileurl="file://$PROJECT_DIR$/microservice-simple-consumer-movie/microservice-simple-consumer-movie.iml" filepath="$PROJECT_DIR$/microservice-simple-consumer-movie/microservice-simple-consumer-movie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/microservice-simple-provider-user/microservice-simple-provider-user.iml" filepath="$PROJECT_DIR$/microservice-simple-provider-user/microservice-simple-provider-user.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-cloud.iml" filepath="$PROJECT_DIR$/spring-cloud.iml" />
+    </modules>
+  </component>
+</project>
