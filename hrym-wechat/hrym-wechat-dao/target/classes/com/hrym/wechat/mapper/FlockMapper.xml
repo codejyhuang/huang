@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.FlockMapper">
+
+    <resultMap id="baseResultMap" type="com.hrym.wechat.entity.Flock">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="intro" column="intro"/>
+        <result property="privacy" column="privacy"/>
+        <result property="dedicationVerses" column="dedication_verses"/>
+        <result property="createTime" column="create_time"/>
+        <result property="dayDoneNum" column="day_done_num"/>
+        <result property="totalDoneNum" column="total_done_num"/>
+        <result property="itemJoinNum" column="item_join_num"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="state" column="state"/>
+        <association property="createUser" javaType="com.hrym.wechat.entity.WechatUserAccount" columnPrefix="u_">
+            <id property="uuid" column="uuid"/>
+            <result property="nickName" column="nickname"/>
+            <result property="avatar" column="avatar"/>
+        </association>
+        <collection property="flockItems" ofType="com.hrym.wechat.entity.FlockItem" column="id"
+                    select="com.hrym.wechat.mapper.FlockItemMapper.selectByFlockId"/>
+    </resultMap>
+
+    <insert id="createFlock" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into t_flock(name,intro,privacy,dedication_verses,create_time,day_done_num,total_done_num,item_join_num,item_num,creater_id)
+        values(#{name},#{intro},#{privacy},#{dedicationVerses},#{createTime},#{dayDoneNum},#{totalDoneNum},#{itemJoinNum},#{itemNum},#{createUser.uuid})
+    </insert>
+    <update id="batchUpdate">
+        update t_flock set
+        day_done_num = #{num} + day_done_num,
+        total_done_num = #{num} + total_done_num
+        where id in <include refid="base_foreach"/>
+    </update>
+    <update id="logicDeleteFlock">
+        update t_flock set state = #{state}
+        where id = #{flockId}
+    </update>
+    <update id="updateFlockIntro">
+        update t_flock set intro = #{intro}
+        where id = #{id}
+    </update>
+    <update id="updateFlockPrivacy">
+        update t_flock set privacy = #{privacy}
+        where id = #{id}
+    </update>
+    <update id="updateFlockDedicationVerses">
+        update t_flock set dedication_verses = #{de}
+        where id = #{id}
+    </update>
+    <update id="updateFlockItemNum">
+        update t_flock set item_num = #{size} + item_num
+        where id = #{id}
+    </update>
+    <update id="updateFlockJoinNum">
+        update t_flock set item_join_num = item_join_num + #{updateNum}
+        where id = #{id}
+    </update>
+    <select id="queryByPrimaryKey" resultMap="baseResultMap">
+        select id,f.name,f.state,intro,privacy,dedication_verses,create_time,day_done_num,total_done_num,item_join_num,item_num,avatar_url,
+        u.uuid u_uuid ,u.avatar u_avatar ,u.nickname u_nickname
+        from t_flock f
+        left join t_user_account u on f.creater_id = u.uuid
+        where id = #{id}
+    </select>
+
+    <select id="listByIds" resultMap="baseResultMap">
+        select f.id,f.name,intro,privacy,dedication_verses,f.create_time,day_done_num,total_done_num,item_join_num,item_num,avatar_url,
+		u.uuid u_uuid ,u.avatar u_avatar ,u.nickname u_nickname
+        from t_flock f
+		right join t_flock_user r on r.flock_id = f.id
+	    left join t_user_account u on f.creater_id = u.uuid
+		where r.uuid = #{uuid} and f.state = 1 ORDER BY r.`order` ASC, r.create_time desc;
+    </select>
+
+    <select id="queryFlockItemList" resultType="com.hrym.wechat.entity.FlockItem">
+         SELECT item_id,item_content_id,type FROM t_flock_item
+        WHERE state =0 AND flock_id in (SELECT flock_id FROM t_flock_user WHERE uuid =#{uuid}) GROUP BY item_id,item_content_id,type
+    </select>
+
+    <select id="listflockUserById" resultType="com.hrym.wechat.entity.FlockUser">
+        select id,flock_id,uuid,type,`order` from t_flock_user where uuid = #{uuid} and flock_id = #{flockId}
+    </select>
+
+    <select id="queryCountByName" resultType="java.lang.Integer">
+        select count(id) from t_flock
+        where name like #{name}  and state = 1
+    </select>
+
+    <select id="queryFlockCreatedTimeById" resultType="com.hrym.wechat.entity.Flock">
+        SELECT create_time FROM t_flock WHERE id =#{id}
+    </select>
+    <select id="queryByItemIdAndContentIdAndUuid" resultType="com.hrym.wechat.entity.Flock">
+        select f.* from t_flock f
+        right join
+        t_flock_user u
+        on f.id = u.flock_id
+        right join
+        t_flock_item i
+        on i.item_id = #{itemId} and i.item_content_id = #{itemContentId} and i.type = #{type} and i.state = 0 and f.id = i.flock_id
+        where u.uuid = #{userId} and f.state = 1
+    </select>
+
+    <select id="queryJoinFlockList" resultMap="baseResultMap">
+         select id,f.name,intro,privacy,dedication_verses,create_time,day_done_num,total_done_num,item_join_num,item_num,avatar_url,f.state,
+        u.uuid u_uuid ,u.avatar u_avatar ,u.nickname u_nickname
+        from t_flock f
+        left join t_user_account u on f.creater_id = u.uuid
+        where f.id  NOT in (select flock_id from t_flock_user where uuid = #{uuid})  and f.state = 1 AND f.privacy =1
+    </select>
+
+    <select id="queryFlockList" resultType="com.hrym.wechat.entity.Flock">
+       SELECT k.`name`,id,k.creater_id,k.dedication_verses,k.avatar_url,t.avatar,t.nickname,k.item_join_num
+       FROM t_flock k left JOIN t_user_account t ON t.uuid = k.creater_id
+       WHERE k.state =1
+    </select>
+
+    <select id="totalUserBackup" resultType="com.hrym.wechat.entity.TaskCommon">
+        SELECT t.nickname,t.created_time as create_time ,COUNT(*) as count,SUM(done_num) as done_num FROM t_task_common_view w
+        LEFT JOIN t_user_account t ON t.uuid = #{uuid} WHERE w.uuid =#{uuid} and is_exit = 1;
+    </select>
+
+    <select id="queryItemListDeatil" resultType="com.hrym.wechat.entity.TaskCommon">
+        select lesson_name,sum(done_num) AS done_num,tv.is_exit  from t_task_common_view tv
+          left join t_flock_lesson_view lv
+          on lv.item_id = tv.item_id and lv.item_content_id = tv.item_content_id and lv.type = tv.type
+          where tv.uuid = #{uuid}
+          group by tv.item_id,tv.item_content_id,tv.type
+          order by tv.is_exit
+    </select>
+
+    <sql id="base_where">
+        id,f.name,intro,privacy,dedication_verses,create_time,day_done_num,total_done_num,item_join_num,item_num,
+        u.uuid u_uuid ,u.avatar u_avatar ,u.nickname u_nickname
+        from t_flock f
+        left join t_user_account u on f.creater_id = u.uuid
+    </sql>
+
+    <sql id="base_foreach">
+        <foreach collection="flockIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </sql>
+</mapper>

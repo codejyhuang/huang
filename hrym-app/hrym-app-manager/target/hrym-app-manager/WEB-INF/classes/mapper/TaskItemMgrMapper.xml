@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.manager.dao.TaskItemMgrMapper">
+
+    <!--为TaskItemMapper的接口方法提供sql语句配置 -->
+    <select id="findAllTaskItem" parameterType="com.hrym.appcommon.model.task.TaskItem"
+            resultType="com.hrym.appcommon.model.task.TaskItem">
+
+        SELECT
+        i.item_id,i.is_support,i.item_name,i.item_intro,i.order_num,i.alias_name,i.title_desc,i.item_pic,i.catalogue_id,
+        c.catalogue_id "resourceCatalogue.catalogueId",c.catalogue_name "resourceCatalogue.catalogueName"
+        FROM t_resource_item i
+        LEFT JOIN t_resource_catalogue c ON i.catalogue_id = c.catalogue_id
+
+    </select>
+
+    <!--目录名称搜索-->
+    <select id="searchBycatalogueName" parameterType="com.hrym.appcommon.model.task.TaskItem"
+            resultType="com.hrym.appcommon.model.task.TaskItem">
+
+        SELECT
+        i.item_id,i.item_name,i.is_support,i.item_intro,i.order_num,i.alias_name,i.title_desc,i.item_pic,i.catalogue_id,
+        c.catalogue_id "resourceCatalogue.catalogueId",c.catalogue_name "resourceCatalogue.catalogueName"
+        FROM t_resource_item i
+        LEFT JOIN t_resource_catalogue c ON i.catalogue_id = c.catalogue_id
+        WHERE c.catalogue_name LIKE '%${catalogueName}%'
+
+    </select>
+
+    <!--资源名称搜索-->
+    <select id="findTaskItemByName" parameterType="com.hrym.appcommon.model.task.TaskItem"
+            resultType="com.hrym.appcommon.model.task.TaskItem">
+
+        SELECT
+        i.item_id,i.item_name,i.is_support,i.item_intro,i.order_num,i.alias_name,i.title_desc,i.item_pic,i.catalogue_id,
+        c.catalogue_id "resourceCatalogue.catalogueId",c.catalogue_name "resourceCatalogue.catalogueName"
+        FROM t_resource_item i
+        LEFT JOIN t_resource_catalogue c ON i.catalogue_id = c.catalogue_id
+        WHERE i.item_name LIKE '%${itemName}%'
+
+    </select>
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+</mapper>

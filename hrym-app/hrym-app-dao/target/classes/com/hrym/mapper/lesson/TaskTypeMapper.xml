@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.mapper.lesson.TaskTypeMapper">
+
+    <resultMap type="com.hrym.appcommon.model.task.TaskType" id="BaseResultMap">
+        <id column="type_id" property="typeId"/>
+        <result column="type_name" property="typeName"/>
+        <result column="level" property="level"/>
+        <result column="parent_level" property="parentLevel"/>
+        <result column="type_desc" property="typeDesc"/>
+        <result column="sort" property="sort"/>
+        <result column="introduceInfo" property="introduceInfo"/>
+
+        <collection property="taskItems" ofType="com.hrym.appcommon.model.task.TaskItem">
+            <id column="item_id" property="itemId"/>
+            <result column="task_type" property="taskType"/>
+            <result column="item_name" property="itemName"/>
+            <result column="item_intro" property="itemIntro"/>
+            <result column="item_pic" property="itemPic"/>
+            <result column="title_desc" property="titleDesc"/>
+        </collection>
+    </resultMap>
+    <!--为dao接口方法提供sql语句配置 -->
+    <select id="findTaskTypes" resultType="com.hrym.appcommon.model.task.TaskType">
+        SELECT
+        type_id,type_name,type_desc,img
+        FROM
+        t_task_type
+        WHERE type_id=10001 OR type_id=10002 OR type_id=10003 OR type_id=10004 OR type_id=10005 OR type_id=10006 OR
+        type_id=10007 ORDER BY FIELD(type_id,10005,10004,10006,10003,10001,10002,10007)
+    </select>
+
+    <select id="findTaskTypeById" resultMap="BaseResultMap">
+        SELECT
+        a.type_id,a.type_name,a.type_desc,a.introduceInfo,c.item_id,
+        c.item_name,c.item_intro,c.item_pic,c.title_desc
+        FROM
+        t_task_type a LEFT JOIN t_work_item b ON a.type_id =b.type_id LEFT JOIN t_resource_item c ON b.item_id=c.item_id
+        WHERE
+        a.type_id=#{typeId} ORDER BY c.is_support DESC,c.update_time DESC
+    </select>
+
+    <select id="findTaskItemById" resultMap="BaseResultMap">
+        SELECT
+        a.type_id,a.type_name,a.type_desc,a.introduceInfo,c.item_id,
+        item_name,c.item_intro,c.item_pic,c.title_desc
+        FROM
+        t_task_type a LEFT JOIN t_work_item b ON a.type_id=b.type_id LEFT JOIN t_resource_item c ON b.item_id=c.item_id
+        WHERE
+        a.type_id=#{typeId} AND c.catalogue_id!=10012 AND c.item_name like '%${itemName}%' ORDER BY c.is_support
+        DESC,c.update_time DESC
+    </select>
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+</mapper>

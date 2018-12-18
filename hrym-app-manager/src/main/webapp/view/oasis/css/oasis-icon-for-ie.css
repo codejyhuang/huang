@@ -1,0 +1,371 @@
+/*
+oasis图标库for ie7-8，采用图标形式构建
+
+```html
+<i class="icon-home"></i>
+```
+*/
+
+.oasicon{
+  display:inline-block;
+  background-image: url(../img/oasicon.png);
+  width: 16px;
+  height: 16px;
+}
+.oasicon.oasicon-add {
+  background-position: -16px 0px;
+}
+.oasicon.oasicon-additem {
+  background-position: -48px -112px;
+}
+.oasicon.oasicon-adsl {
+  background-position: 0px -16px;
+}
+.oasicon.oasicon-all {
+  background-position: -16px -16px;
+}
+.oasicon.oasicon-anchor {
+  background-position: -32px 0px;
+}
+.oasicon.oasicon-appcenter {
+  background-position: -32px -16px;
+}
+.oasicon.oasicon-arrow-down {
+  background-position: 0px -32px;
+}
+.oasicon.oasicon-arrow-left {
+  background-position: -16px -32px;
+}
+.oasicon.oasicon-arrow-right {
+  background-position: -32px -32px;
+}
+.oasicon.oasicon-arrow-up {
+  background-position: -48px 0px;
+}
+.oasicon.oasicon-asc {
+  background-position: -48px -16px;
+}
+.oasicon.oasicon-assigned {
+  background-position: -48px -32px;
+}
+.oasicon.oasicon-audio {
+  background-position: 0px -48px;
+}
+.oasicon.oasicon-bankcard {
+  background-position: -16px -48px;
+}
+.oasicon.oasicon-browser {
+  background-position: -32px -48px;
+}
+.oasicon.oasicon-calendar {
+  background-position: -48px -48px;
+}
+.oasicon.oasicon-card {
+  background-position: -64px 0px;
+}
+.oasicon.oasicon-case {
+  background-position: -64px -16px;
+}
+.oasicon.oasicon-changeip {
+  background-position: -64px -32px;
+}
+.oasicon.oasicon-classification {
+  background-position: -64px -48px;
+}
+.oasicon.oasicon-close {
+  background-position: 0px -64px;
+}
+.oasicon.oasicon-clue {
+  background-position: -16px -64px;
+}
+.oasicon.oasicon-data-flow {
+  background-position: -32px -64px;
+}
+.oasicon.oasicon-data {
+  background-position: -48px -64px;
+}
+.oasicon.oasicon-delcheck {
+  background-position: -64px -64px;
+}
+.oasicon.oasicon-delete {
+  background-position: -80px 0px;
+}
+.oasicon.oasicon-delitem {
+  background-position: -80px -16px;
+}
+.oasicon.oasicon-desc {
+  background-position: -80px -32px;
+}
+.oasicon.oasicon-detail {
+  background-position: -80px -48px;
+}
+.oasicon.oasicon-dot {
+  background-position: -80px -64px;
+}
+.oasicon.oasicon-down-list {
+  background-position: 0px -80px;
+}
+.oasicon.oasicon-downfload {
+  background-position: -16px -80px;
+}
+.oasicon.oasicon-download {
+  background-position: -32px -80px;
+}
+.oasicon.oasicon-edit {
+  background-position: -48px -80px;
+}
+.oasicon.oasicon-exchange {
+  background-position: -64px -80px;
+}
+.oasicon.oasicon-export {
+  background-position: -80px -80px;
+}
+.oasicon.oasicon-facebook {
+  background-position: -96px 0px;
+}
+.oasicon.oasicon-fail {
+  background-position: -96px -16px;
+}
+.oasicon.oasicon-fav {
+  background-position: -96px -32px;
+}
+.oasicon.oasicon-file {
+  background-position: -96px -48px;
+}
+.oasicon.oasicon-fold {
+  background-position: -96px -64px;
+}
+.oasicon.oasicon-folder {
+  background-position: -96px -80px;
+}
+.oasicon.oasicon-forwarding {
+  background-position: 0px -96px;
+}
+.oasicon.oasicon-fromlib {
+  background-position: -16px -96px;
+}
+.oasicon.oasicon-game {
+  background-position: -32px -96px;
+}
+.oasicon.oasicon-get-mail {
+  background-position: -48px -96px;
+}
+.oasicon.oasicon-goods {
+  background-position: -64px -96px;
+}
+.oasicon.oasicon-grasp {
+  background-position: -80px -96px;
+}
+.oasicon.oasicon-help {
+  background-position: -96px -96px;
+}
+.oasicon.oasicon-icon {
+  background-position: -112px 0px;
+}
+.oasicon.oasicon-id-card {
+  background-position: -112px -16px;
+}
+.oasicon.oasicon-id-change {
+  background-position: -112px -32px;
+}
+.oasicon.oasicon-image {
+  background-position: -112px -48px;
+}
+.oasicon.oasicon-imp-person {
+  background-position: -112px -64px;
+}
+.oasicon.oasicon-import {
+  background-position: -112px -80px;
+}
+.oasicon.oasicon-internet {
+  background-position: -112px -96px;
+}
+.oasicon.oasicon-ip {
+  background-position: 0px -112px;
+}
+.oasicon.oasicon-list {
+  background-position: -16px -112px;
+}
+.oasicon.oasicon-mail {
+  background-position: -32px -112px;
+}
+.oasicon.oasicon-map {
+  background-position: 0px 0px;
+}
+.oasicon.oasicon-newwindow {
+  background-position: -64px -112px;
+}
+.oasicon.oasicon-next {
+  background-position: -80px -112px;
+}
+.oasicon.oasicon-nextstep {
+  background-position: -96px -112px;
+}
+.oasicon.oasicon-no-warning {
+  background-position: -112px -112px;
+}
+.oasicon.oasicon-notice {
+  background-position: -128px 0px;
+}
+.oasicon.oasicon-opt-row {
+  background-position: -128px -16px;
+}
+.oasicon.oasicon-opt {
+  background-position: -128px -32px;
+}
+.oasicon.oasicon-orbit {
+  background-position: -128px -48px;
+}
+.oasicon.oasicon-ordering {
+  background-position: -128px -64px;
+}
+.oasicon.oasicon-password {
+  background-position: -128px -80px;
+}
+.oasicon.oasicon-phone-where {
+  background-position: -128px -96px;
+}
+.oasicon.oasicon-phonebook {
+  background-position: -128px -112px;
+}
+.oasicon.oasicon-positions {
+  background-position: 0px -128px;
+}
+.oasicon.oasicon-prev {
+  background-position: -16px -128px;
+}
+.oasicon.oasicon-print {
+  background-position: -32px -128px;
+}
+.oasicon.oasicon-qq {
+  background-position: -48px -128px;
+}
+.oasicon.oasicon-quit {
+  background-position: -64px -128px;
+}
+.oasicon.oasicon-ranking {
+  background-position: -80px -128px;
+}
+.oasicon.oasicon-refresh {
+  background-position: -96px -128px;
+}
+.oasicon.oasicon-religion {
+  background-position: -112px -128px;
+}
+.oasicon.oasicon-resource {
+  background-position: -128px -128px;
+}
+.oasicon.oasicon-rubbish {
+  background-position: -144px 0px;
+}
+.oasicon.oasicon-save {
+  background-position: -144px -16px;
+}
+.oasicon.oasicon-screen-capture {
+  background-position: -144px -32px;
+}
+.oasicon.oasicon-search {
+  background-position: -144px -48px;
+}
+.oasicon.oasicon-send-mail {
+  background-position: -144px -64px;
+}
+.oasicon.oasicon-setting {
+  background-position: -144px -80px;
+}
+.oasicon.oasicon-signal {
+  background-position: -144px -96px;
+}
+.oasicon.oasicon-skip {
+  background-position: -144px -112px;
+}
+.oasicon.oasicon-skype {
+  background-position: -144px -128px;
+}
+.oasicon.oasicon-sort {
+  background-position: 0px -144px;
+}
+.oasicon.oasicon-succeed {
+  background-position: -16px -144px;
+}
+.oasicon.oasicon-succes {
+  background-position: -32px -144px;
+}
+.oasicon.oasicon-swerve {
+  background-position: -48px -144px;
+}
+.oasicon.oasicon-table {
+  background-position: -64px -144px;
+}
+.oasicon.oasicon-talk {
+  background-position: -80px -144px;
+}
+.oasicon.oasicon-task {
+  background-position: -96px -144px;
+}
+.oasicon.oasicon-temple {
+  background-position: -112px -144px;
+}
+.oasicon.oasicon-tencent-weibo {
+  background-position: -128px -144px;
+}
+.oasicon.oasicon-time-change {
+  background-position: -144px -144px;
+}
+.oasicon.oasicon-timeline {
+  background-position: -160px 0px;
+}
+.oasicon.oasicon-tip {
+  background-position: -160px -16px;
+}
+.oasicon.oasicon-tool {
+  background-position: -160px -32px;
+}
+.oasicon.oasicon-top {
+  background-position: -160px -48px;
+}
+.oasicon.oasicon-twitter {
+  background-position: -160px -64px;
+}
+.oasicon.oasicon-unfav {
+  background-position: -160px -80px;
+}
+.oasicon.oasicon-unfold {
+  background-position: -160px -96px;
+}
+.oasicon.oasicon-upfload {
+  background-position: -160px -112px;
+}
+.oasicon.oasicon-upload {
+  background-position: -160px -128px;
+}
+.oasicon.oasicon-url {
+  background-position: -160px -144px;
+}
+.oasicon.oasicon-user {
+  background-position: 0px -160px;
+}
+.oasicon.oasicon-users {
+  background-position: -16px -160px;
+}
+.oasicon.oasicon-vedio {
+  background-position: -32px -160px;
+}
+.oasicon.oasicon-virtual-id {
+  background-position: -48px -160px;
+}
+.oasicon.oasicon-virus {
+  background-position: -64px -160px;
+}
+.oasicon.oasicon-warning {
+  background-position: -80px -160px;
+}
+.oasicon.oasicon-weixin {
+  background-position: -96px -160px;
+}
+.oasicon.oasicon-workbench {
+  background-position: -112px -160px;
+}
+.oasicon.oasicon-yotube {
+  background-position: -128px -160px;
+}

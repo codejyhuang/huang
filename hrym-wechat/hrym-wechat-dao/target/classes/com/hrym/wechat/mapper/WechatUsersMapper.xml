@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.WechatUsersMapper">
+
+    <!--为dao接口方法提供sql语句配置 -->
+
+    <select id="finAllWechatUsers" resultType="java.util.List">
+        SELECT
+        uuid,token,is_social_login,login_time,phone_model,os,os_version
+        FROM
+        t_login
+        WHERE uuid = #{uuid}
+    </select>
+    <select id="findUserAcountByUserId" resultType="com.hrym.wechat.entity.FlockUserBack">
+        SELECT nickname,avatar FROM t_user_account WHERE uuid = #{uuid}
+    </select>
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+</mapper>

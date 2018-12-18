@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd ">
+
+    <dubbo:application name="hrym-rpc-service"/>
+
+    <!--<dubbo:monitor protocol="registry"/>-->
+    <dubbo:registry address="zookeeper://192.168.1.210:2181"/>
+
+    <!--<dubbo:protocol name="dubbo" port="20884"/>-->
+    <!--<dubbo:protocol name="hessian" port="20887"/>-->
+    <dubbo:reference id="loginService" interface="com.hrym.api.auth.LoginService"/>
+    <dubbo:reference id="taskAddService" interface="com.hrym.api.auth.TaskAddService"/>
+    <dubbo:reference id="fdfsService" interface="com.hrym.api.fdfsdfs.FdfsService"/>
+    <dubbo:reference id="taskService" interface="com.hrym.api.auth.TaskService"/>
+    <dubbo:reference id="myHomepageService" interface="com.hrym.api.mine.MyHomepageService"/>
+    <dubbo:reference id="associationAddService" interface="com.hrym.api.association.AssociationAddService"/>
+    <dubbo:reference id="suggestService" interface="com.hrym.api.mine.SuggestService"/>
+    <dubbo:reference id="esSuggestService" interface="com.hrym.api.mine.ESSuggestService"/>
+    <dubbo:reference id="associationHandleService" interface="com.hrym.api.association.AssociationHandleService"/>
+    <dubbo:reference id="resourceService" interface="com.hrym.api.association.ResourceService"/>
+    <dubbo:reference id="htmlViewService" interface="com.hrym.api.auth.HtmlViewService"/>
+    <dubbo:reference id="bluetoothService" interface="com.hrym.api.auth.BluetoothService"/>
+    <dubbo:reference id="historyRecordService" interface="com.hrym.api.auth.HistoryRecordService"/>
+    <dubbo:reference id="bookService" interface="com.hrym.api.auth.BookService"/>
+    <dubbo:reference id="meditationService" interface="com.hrym.api.auth.MeditationService"/>
+    <dubbo:reference id="resourceItemLessonService" interface="com.hrym.api.auth.ResourceItemLessonService"/>
+    <dubbo:reference id="attractUserActivityService" interface="com.hrym.api.auth.AttractUserActivityService"/>
+    <dubbo:reference id="questionService" interface="com.hrym.api.question.IQuestionService"/>
+</beans>

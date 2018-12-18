@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrym.mapper.question.QuestionMapper" >
+  <resultMap id="BaseResultMap" type="com.hrym.appcommon.model.question.Question" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="uuid" property="uuid" jdbcType="INTEGER" />
+    <result column="question_name" property="questionName" jdbcType="VARCHAR" />
+    <result column="is_ anonymous" property="isAnonymous" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="INTEGER" />
+    <result column="answer_num" property="answerNum" jdbcType="INTEGER" />
+    <collection property="answerList" column="id" ofType="com.hrym.appcommon.model.question.Answer"
+                select="com.hrym.mapper.question.AnswerMapper.selectByQuestionId"/>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from `t_resource_question`
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.hrym.appcommon.model.question.Question" useGeneratedKeys="true" keyProperty="id" >
+    insert into `t_resource_question` (uuid, question_name, `is_ anonymous`,
+      create_time, update_time, answer_num
+      )
+    values (#{uuid,jdbcType=INTEGER}, #{questionName,jdbcType=VARCHAR}, #{isAnonymous,jdbcType=INTEGER},
+      #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, #{answerNum,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.hrym.appcommon.model.question.Question" >
+    update `t_resource_question`
+    set uuid = #{uuid,jdbcType=INTEGER},
+      question_name = #{questionName,jdbcType=VARCHAR},
+      `is_ anonymous` = #{isAnonymous,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=INTEGER},
+      answer_num = #{answerNum,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, uuid, question_name, `is_ anonymous`, create_time, update_time, answer_num
+    from `t_resource_question`
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, uuid, question_name, `is_ anonymous`, create_time, update_time, answer_num
+    from `t_resource_question`
+  </select>
+  <select id="selectAllByUserId" resultMap="BaseResultMap">
+    select id, uuid, question_name, `is_ anonymous`, create_time, update_time, answer_num
+    from `t_resource_question`
+    order by field(uuid,#{uuid}) desc , update_time desc , create_time desc
+  </select>
+    <select id="queryCountByUuid" resultType="java.lang.Integer">
+      select count(id) from `t_resource_question` where uuid = #{uuid}
+    </select>
+</mapper>

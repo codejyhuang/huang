@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.rpc.association.dao.mapper.ArticleMapper">
+
+    <!--为dao接口方法提供sql语句配置 -->
+    <!--查询所有文章-->
+   <select id="findAllArticle" resultType="com.hrym.rpc.app.dao.model.association.Article">
+        SELECT idt_article,special_column_id,article_title,article_pic,article_abstract,update_time,article_url,column_name "specialColumn.columnName"
+        FROM t_article LEFT JOIN t_special_column ON special_column_id=idt_special_column
+        WHERE status_article=1 ORDER BY update_time DESC
+    </select>
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+</mapper>

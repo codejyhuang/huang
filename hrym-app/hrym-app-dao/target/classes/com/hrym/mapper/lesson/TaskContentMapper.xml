@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.mapper.lesson.TaskContentMapper">
+
+    <select id="findContentById" resultType="com.hrym.appcommon.model.task.TaskContent">
+        SELECT
+        a.item_id,a.file_txt,a.text,a.pic_version_name,a.version_name,a.file_pic,a.item_content_id,a.video_file,a.content_version,a.version,b.item_name
+        "taskItem.itemName"
+        FROM t_resource_content a LEFT JOIN t_resource_item b ON a.item_id=b.item_id
+        WHERE a.item_id=#{itemId}
+    </select>
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+</mapper>

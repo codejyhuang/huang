@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.rpc.auth.dao.mapper.ThumbsUpMapper">
+
+    <insert id="insertThumbsUp">
+        INSERT INTO t_thumbs_up(user_id,topic_id,time,type,beizanren_id,topic_type)
+        VALUES
+        (#{userId},#{topicId},#{time},#{type},#{beizanrenId},#{topicType})
+    </insert>
+
+    <select id="findThumsUp" resultType="com.hrym.rpc.app.dao.model.task.ThumbsUp">
+        SELECT * FROM t_thumbs_up WHERE topic_id=#{topicId} AND user_id=#{userId} AND topic_type=#{topicType}
+    </select>
+
+    <update id="updateThumbsUp">
+        UPDATE t_thumbs_up
+        SET type=#{type}
+        WHERE topic_id=#{topicId} AND user_id=#{userId} AND topic_type=#{topicType}
+    </update>
+
+    <select id="findUserIdByTopicId" resultType="com.hrym.rpc.app.dao.model.task.ThumbsUp">
+        SELECT user_id,nickname "userInfo.nickName"
+        from t_thumbs_up
+        LEFT JOIN t_user_account ON user_id=uuid
+        where topic_id=#{topicId} AND topic_type=#{topicType} and type=1 ORDER BY time ASC
+    </select>
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+</mapper>

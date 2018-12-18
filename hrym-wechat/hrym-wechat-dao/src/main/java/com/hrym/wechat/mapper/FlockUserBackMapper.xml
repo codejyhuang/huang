@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.FlockUserBackMapper">
+
+    <insert id="insertSpecialBack">
+        INSERT INTO t_dedication_verses(item_type,type,time,flag,info,uuid,record_id,ymd,item_id,content_id)
+         VALUES
+         (#{p.itemType},1,#{time},0,#{p.info},#{p.uuid},#{p.recordId},#{ymd},#{p.itemId},#{p.contentId})
+    </insert>
+
+    <insert id="insertTestSpecialBack">
+        INSERT INTO t_dedication_verses(item_type,type,time,flag,info,uuid,record_id,ymd,descJson,itemJson)
+         VALUES
+         (3,0,#{time},0,#{info},0,#{recordId},#{ymd},#{descJson},#{itemJson})
+    </insert>
+
+    <update id="updateSpecialBack">
+        UPDATE t_dedication_verses SET info = #{info},time = #{time} where id = #{id}
+    </update>
+    <delete id="deleteSpecialBack">
+        DELETE  FROM t_dedication_verses WHERE id = #{id}
+    </delete>
+
+
+    <select id="queryLastTimeSpecialBack" resultType="com.hrym.wechat.entity.FlockUserBack">
+        SELECT id,uuid,record_id,time,info FROM t_dedication_verses
+          WHERE item_type =#{itemType}  and item_id = #{itemId} and uuid = #{uuid}
+        <if test="itemType==0">
+            and content_id = #{contentId}
+        </if>
+            ORDER BY time DESC LIMIT 1
+    </select>
+
+    <select id="queryDedicationVersesList" resultType="com.hrym.wechat.entity.FlockUserBack">
+          SELECT id,type,uuid,item_type,record_id,time,flag,info,ymd,descJson,itemJson FROM t_dedication_verses
+        WHERE type =0 AND record_id in (SELECT flock_id FROM t_flock_user WHERE uuid =#{uuid}) ORDER BY time desc
+    </select>
+
+    <select id="queryDedicationVersesById" resultType="com.hrym.wechat.entity.FlockUserBack">
+              SELECT id,type,uuid,item_type,record_id,time,flag,info,descJson,ymd,itemJson FROM t_dedication_verses
+                WHERE id=#{id}
+    </select>
+
+    <select id="queryDedicationVerses" resultType="com.hrym.wechat.entity.FlockUserBack">
+        SELECT dv.id,dv.time,dv.type,dv.item_type,dv.info,dv.item_id,dv.content_id,lv.lesson_name as versionName  FROM t_dedication_verses dv
+	            left join t_flock_lesson_view lv  on dv.item_id = lv.item_id and dv.content_id = lv.item_content_id AND dv.item_type = lv.type
+                where dv.uuid = #{uuid} AND dv.type =1
+                order by dv.time desc
+    </select>
+    <select id="queryDedicationVersesRecordList" resultType="com.hrym.wechat.entity.FlockUserBack">
+        select dv.record_id,dv.id,dv.time,dv.type,dv.item_type,dv.info,rv.item_id,rv.item_content_id as contentId,lv.lesson_name as versionName,t.nickname,t.avatar from
+                t_dedication_verses dv
+                left join t_task_record_all_view rv
+                on dv.item_type = rv.type and dv.record_id = rv.record_id
+                left join t_flock_lesson_view lv
+                on rv.item_id = lv.item_id and rv.item_content_id = lv.item_content_id
+                LEFT JOIN t_user_account t on t.uuid =dv.uuid
+                where dv.record_id in (SELECT parent_id FROM ${tableName} WHERE flock_id =#{flockId} AND ymd = #{ymd})
+                order by dv.time desc
+    </select>
+
+</mapper>

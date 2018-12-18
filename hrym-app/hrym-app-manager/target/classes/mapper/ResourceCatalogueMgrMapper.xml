@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.manager.dao.ResourceCatalogueMapper">
+
+    <!--为TaskContentMapper的接口方法提供sql语句配置 -->
+    <select id="searchCatalogueByIdq" parameterType="com.hrym.appcommon.model.task.ResourceCatalogue"
+            resultType="com.hrym.appcommon.model.task.ResourceCatalogue">
+        SELECT
+        catalogue_id,catalogue_name,level,parent_level,catalogue_desc,introduceInfo,img,creator,create_time,parent_type_id
+        FROM t_resource_catalogue
+        <where>
+            <if test="ResourceCatalogue !=null">
+                <if test="ResourceCatalogue.level !=null and ResourceCatalogue.level != '' ">
+                    and level = #{ResourceCatalogue.level}
+                </if>
+                <if test="ResourceCatalogue.catalogueName !=null and ResourceCatalogue.catalogueName != ''">
+                    and catalogue_name like '%${ResourceCatalogue.catalogueName}%'
+                </if>
+            </if>
+        </where>
+
+    </select>
+
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+</mapper>

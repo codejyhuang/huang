@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="hrym-wechat-service"/>
+
+    <dubbo:registry address="zookeeper://192.168.166.1:2181"/>
+
+    <dubbo:provider protocol="dubbo" timeout="5000" delay="-1" retries="0"/>
+    <dubbo:protocol name="dubbo" port="20885"  accepts="1000"/>
+    <dubbo:protocol name="hessian" port="20888" server="jetty" accepts="1000"/>
+
+    <bean id="wechatUsersService" class="com.hrym.wechat.service.WechatUsersServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.smallProgram.WechatUsersService" ref="wechatUsersService"  />
+
+    <bean id="countRecordService" class="com.hrym.wechat.service.CountRecordServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.smallProgram.CountRecordService" ref="countRecordService"  />
+
+    <bean id="meditationRecordService" class="com.hrym.wechat.service.MeditationRecordServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.smallProgram.MeditationRecordService" ref="meditationRecordService"  />
+
+    <bean id="meditationTaskService" class="com.hrym.wechat.service.MeditationTaskServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.smallProgram.MeditationTaskService" ref="meditationTaskService"  />
+
+    <bean id="meditationServiceImpl" class="com.hrym.wechat.service.MeditationServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.smallProgram.MeditationService" ref="meditationServiceImpl"  />
+
+    <bean id="aesService" class="com.hrym.wechat.service.AesServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.smallProgram.AesService" ref="aesServiceImpl"  />
+
+    <bean id="meditationTypeService" class="com.hrym.wechat.service.MeditationTypeServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.smallProgram.MeditationTypeService" ref="meditationTypeServiceImpl"  />
+
+    <bean id="flockService" class="com.hrym.wechat.service.impl.FlockServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.service.IFlockService" ref="flockService"  />
+
+    <bean id="itemLessonService" class="com.hrym.wechat.service.impl.ItemLessonServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.service.IItemLessonService" ref="itemLessonService"  />
+
+    <bean id="itemCustomService" class="com.hrym.wechat.service.impl.ItemCustomServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.service.IItemCustomService" ref="itemCustomService"  />
+
+    <bean id="itemUserUnitService" class="com.hrym.wechat.service.impl.ItemUserUnitServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.service.IItemUserUnitService" ref="itemUserUnitService"  />
+
+    <bean id="flockCountReportService" class="com.hrym.wechat.service.impl.FlockCountReportServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.service.IFlockCountReportService" ref="flockCountReportService"  />
+
+    <bean id="flockUserService" class="com.hrym.wechat.service.impl.FlockUserServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.service.IFlockUserService" ref="flockUserService"  />
+
+    <bean id="flockUserBackService" class="com.hrym.wechat.service.impl.FlockUserBackServiceImpl"/>
+    <dubbo:service interface="com.hrym.wechat.service.IFlockUserBackService" ref="flockUserBackService"  />
+
+
+
+</beans>

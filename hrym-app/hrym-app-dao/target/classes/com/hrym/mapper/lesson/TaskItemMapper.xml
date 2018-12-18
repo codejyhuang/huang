@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.mapper.lesson.TaskItemMapper">
+
+
+    <!--为dao接口方法提供sql语句配置 -->
+    <select id="findTaskItemById" resultType="com.hrym.appcommon.model.task.TaskItem">
+        <!-- 如何告诉MyBatis把结果映射到TaskItem同时映射TaskContentType属性 -->
+        <!-- 可以自由控制SQL -->
+        SELECT
+        a.item_id,a.item_name,a.item_intro,a.item_pic,a.title_desc,a.is_support,
+        c.type_id "type.typeId",c.type_name "type.typeName",c.type_desc "type.typeDesc"
+        FROM
+        t_resource_item a
+        LEFT JOIN t_work_item d ON a.item_id=d.item_id
+        LEFT JOIN t_task_type c ON d.type_id=c.type_id
+        WHERE
+        a.item_id=#{itemId}
+        <if test="typeId!=null">
+            AND c.type_id=#{typeId}
+        </if>
+    </select>
+
+    <update id="updateOrderNumById">
+        UPDATE t_resource_item
+        SET order_num=order_num+1
+        WHERE item_id=#{itemId}
+    </update>
+
+    <!--查询类型为诵经的所有功课（通过最新时间排序）-->
+    <select id="findItemOrderByTime" resultType="com.hrym.appcommon.model.task.TaskItem">
+        SELECT a.item_id,a.item_name,a.item_intro,a.item_pic,a.title_desc,c.type_id "type.typeId",c.type_name
+        "type.typeName"
+        FROM t_resource_item a
+        LEFT JOIN t_work_item b on a.item_id=b.item_id
+        LEFT JOIN t_task_type c ON b.type_id=c.type_id
+        WHERE c.type_id=10006 and a.item_name like '%${filterStr}%' order by a.update_time DESC
+    </select>
+
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+</mapper>

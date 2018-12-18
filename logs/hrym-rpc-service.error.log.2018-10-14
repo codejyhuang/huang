@@ -1,0 +1,4 @@
+2018-10-14 08:04:45 [ ERROR ] [ ClientCnxnSocketNIO.java :289(connect)] Unable to open socket to 192.168.1.210/192.168.1.210:2181
+2018-10-14 08:04:46 [ ERROR ] [ ClientCnxnSocketNIO.java :289(connect)] Unable to open socket to 192.168.1.210/192.168.1.210:2181
+2018-10-14 08:04:47 [ ERROR ] [ ClientCnxnSocketNIO.java :289(connect)] Unable to open socket to 192.168.1.210/192.168.1.210:2181
+2018-10-14 08:04:49 [ ERROR ] [ ClientCnxnSocketNIO.java :289(connect)] Unable to open socket to 192.168.1.210/192.168.1.210:2181

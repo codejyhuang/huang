@@ -1,0 +1,59 @@
+@font-face {
+  font-family: "oasis-icon-wx";
+  src: url('../fonts/oasis-icon-wx.eot');/*IE9*/
+  src: url('../fonts/oasis-icon-wx.eot?#iefix') format('embedded-opentype'),/*IE6-IE8*/
+    url('../fonts/oasis-icon-wx.woff') format('woff'), /* chrome、firefox */
+    url('../fonts/oasis-icon-wx.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+    url('../fonts/oasis-icon-wx.svg#oasis-icon-wx') format('svg');/* iOS 4.1- */
+  font-weight: normal;
+  font-style: normal;
+}
+
+.oasicon-wx,
+.oasicon-wx:before {
+  display: inline-block;
+  font-family: "oasis-icon-wx";
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.oasicon-wx-lg {
+  font-size: 1.3333333333333333em;
+  line-height: 0.75em;
+  vertical-align: -15%;
+}
+.oasicon-wx-2x { font-size: 2em; }
+.oasicon-wx-3x { font-size: 3em; }
+.oasicon-wx-4x { font-size: 4em; }
+.oasicon-wx-5x { font-size: 5em; }
+.oasicon-wx-fw {
+  width: 1.2857142857142858em;
+  text-align: center;
+}
+
+.oasicon-wx-advertisement,.oasicon-wx-advertisement:before {before: "\E001";content: "\E001";}
+.oasicon-wx-approve-case,.oasicon-wx-approve-case:before {before: "\E002";content: "\E002";}
+.oasicon-wx-approve-monitor,.oasicon-wx-approve-monitor:before {before: "\E003";content: "\E003";}
+.oasicon-wx-approve-query,.oasicon-wx-approve-query:before {before: "\E004";content: "\E004";}
+.oasicon-wx-auth,.oasicon-wx-auth:before {before: "\E005";content: "\E005";}
+.oasicon-wx-case,.oasicon-wx-case:before {before: "\E006";content: "\E006";}
+.oasicon-wx-logaudit,.oasicon-wx-logaudit:before {before: "\E007";content: "\E007";}
+.oasicon-wx-monitor-group,.oasicon-wx-monitor-group:before {before: "\E008";content: "\E008";}
+.oasicon-wx-monitor-log,.oasicon-wx-monitor-log:before {before: "\E009";content: "\E009";}
+.oasicon-wx-monitor-object,.oasicon-wx-monitor-object:before {before: "\E00A";content: "\E00A";}
+.oasicon-wx-notice,.oasicon-wx-notice:before {before: "\E00B";content: "\E00B";}
+.oasicon-wx-oplog,.oasicon-wx-oplog:before {before: "\E00C";content: "\E00C";}
+.oasicon-wx-query,.oasicon-wx-query:before {before: "\E00D";content: "\E00D";}
+.oasicon-wx-search-favorite,.oasicon-wx-search-favorite:before {before: "\E00E";content: "\E00E";}
+.oasicon-wx-search-friendcircle,.oasicon-wx-search-friendcircle:before {before: "\E00F";content: "\E00F";}
+.oasicon-wx-search-group,.oasicon-wx-search-group:before {before: "\E010";content: "\E010";}
+.oasicon-wx-search-multi,.oasicon-wx-search-multi:before {before: "\E011";content: "\E011";}
+.oasicon-wx-search-object,.oasicon-wx-search-object:before {before: "\E012";content: "\E012";}
+.oasicon-wx-search-origin,.oasicon-wx-search-origin:before {before: "\E013";content: "\E013";}
+.oasicon-wx-search-public,.oasicon-wx-search-public:before {before: "\E014";content: "\E014";}
+.oasicon-wx-stat,.oasicon-wx-stat:before {before: "\E015";content: "\E015";}
+.oasicon-wx-usestat,.oasicon-wx-usestat:before {before: "\E016";content: "\E016";}
+.oasicon-wx-workflow,.oasicon-wx-workflow:before {before: "\E017";content: "\E017";}

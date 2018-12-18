@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.rpc.auth.dao.mapper.TaskPlanMapper">
+
+    <!--为dao接口方法提供sql语句配置 -->
+    <select id="findTaskByToken" resultType="com.hrym.rpc.app.dao.model.task.TaskPlan">
+        SELECT
+        a.counting_method,a.plan_period,a.done_num,a.start_time,b.item_id "taskItem.itemId",b.item_name "taskItem.itemName",b.is_support "taskItem.isSupport",a.plan_target,c.type_id "taskType.typeId"
+        ,c.type_name "taskType.typeName",a.today_commit_num,a.task_id,a.item_id,a.thumbs_up_num,a.music_id,a.remain_cron,a.type_id,a.item_content_id
+        FROM
+        t_task_plan a LEFT JOIN t_resource_item b ON a.item_id=b.item_id
+        LEFT JOIN t_task_type c ON a.type_id=c.type_id
+        WHERE a.uuid=(SELECT uuid FROM t_login WHERE token=#{token}) AND is_exit=1 ORDER BY a.create_time DESC
+    </select>
+
+    <insert id="saveTaskPlan">
+        INSERT
+        t_task_plan(uuid,item_id,plan_target,start_time,plan_period,remain_cron,type_id,item_content_id,create_time,is_exit,update_time,custom_id,recent_add)
+        VALUES
+        (#{uuid},#{itemId},#{planTarget},#{startTime},#{planPeriod},#{remainCron},#{typeId},#{itemContentId},#{createTime},#{isExit},#{updateTime},#{customId},#{recentAdd})
+    </insert>
+
+    <delete id="deleteTaskPlanById">
+        DELETE FROM t_task_plan WHERE task_id=#{taskId}
+    </delete>
+
+    <select id="findTaskPlanById" resultType="com.hrym.rpc.app.dao.model.task.TaskPlan">
+        SELECT
+        c.item_content_id "taskContent.itemContentId",c.voice_count "taskContent.voiceCount",c.voice_text "taskContent.voiceText",
+        c.voice_name "taskContent.voiceName",c.voice_dic "taskContent.voiceDic",c.voice_lm "taskContent.voiceLm",
+        b.end_time "taskMusic.endTime",b.music_file "taskMusic.musicFile",b.music_id "taskMusic.musicId",
+        b.music_subtitle "taskMusic.musicSubtitle",b.setting_time "taskMusic.settingTime",
+        b.start_num "taskMusic.startNum",b.start_time "taskMusic.startTime",b.step "taskMusic.step",
+        b.version_id "taskMusic.versionId",b.music_name "taskMusic.musicName",b.music_file_android "taskMusic.musicFileAndroid",
+        a.counting_method,a.done_num,a.plan_target,a.plan_period,a.today_commit_num,a.music_id,a.start_time,a.type_id,a.item_id,a.item_content_id,a.custom_id
+        FROM
+        t_task_plan a
+        LEFT JOIN t_resource_music b ON a.music_id=b.music_id
+        LEFT JOIN t_resource_content c ON a.item_content_id=c.item_content_id
+        WHERE a.task_id=#{taskId}
+    </select>
+
+    <update id="updateTaskPlanById">
+        UPDATE t_task_plan
+        SET counting_method=#{countingMethod}
+        WHERE task_id=#{taskId}
+    </update>
+
+    <update id="updateTaskplan">
+        UPDATE t_task_plan
+        SET done_num=done_num+#{num},last_commit_num=last_commit_num+#{num},today_commit_num=today_commit_num+#{num},
+        custom_done_num=custom_done_num+#{num}
+        WHERE task_id=#{taskId}
+    </update>
+
+    <update id="updateTaskplanByAuto">
+        UPDATE t_task_plan
+        SET done_num=done_num+#{num},last_commit_num=last_commit_num+#{num},today_commit_num=today_commit_num+#{num},
+        auto_done_num=auto_done_num+#{num}
+        WHERE task_id=#{taskId}
+    </update>
+
+    <!--功课排行榜-->
+    <select id="findAllByItemId" resultType="com.hrym.rpc.app.dao.model.task.TaskPlan">
+        SELECT
+        a.today_commit_num,a.item_id,a.task_id,a.done_num,a.auto_done_num,a.thumbs_up_num,a.uuid,b.uuid "userInfo.uuid",b.nickname "userInfo.nickName",b.avatar "userInfo.avatar",c.type "thumbsUp.type"
+        FROM t_task_plan a LEFT JOIN t_user_account b ON a.uuid= b.uuid
+        LEFT JOIN t_thumbs_up c ON c.topic_id=a.task_id AND a.uuid=c.beizanren_id AND c.topic_type=0 AND c.user_id=#{uuid}
+        WHERE a.item_id=#{itemId} AND a.type_id=#{typeId} AND a.is_exit=1 ORDER BY a.today_commit_num DESC,a.task_id ASC
+    </select>
+
+    <update id="updateRemainCronById">
+        UPDATE t_task_plan
+        SET remain_cron=#{remainCron},update_time=#{updateTime}
+        WHERE task_id=#{taskId}
+    </update>
+
+    <!--功课排行榜我的信息-->
+    <select id="findMyRankById" resultType="com.hrym.rpc.app.dao.model.task.TaskPlan">
+        SELECT
+        a.today_commit_num,a.item_id,a.task_id,a.done_num,a.auto_done_num,a.thumbs_up_num,a.uuid,b.uuid "userInfo.uuid",b.nickname "userInfo.nickName",
+        b.avatar "userInfo.avatar",c.item_name "taskItem.itemName"
+        FROM t_task_plan a LEFT JOIN t_user_account b ON a.uuid= b.uuid
+        LEFT JOIN t_resource_item c ON a.item_id=c.item_id
+        WHERE a.task_id=#{taskId}
+    </select>
+
+    <update id="updatethumbsUpNum">
+        UPDATE t_task_plan
+        SET thumbs_up_num=thumbs_up_num+#{num}
+        WHERE task_id=#{taskId}
+    </update>
+    
+    <update id="updateMusicIdById">
+        UPDATE  t_task_plan
+        SET music_id=#{musicId}
+        WHERE task_id=#{taskId}
+    </update>
+    <!--查询最近完成所有功课历史记录-->
+    <select id="findTaskPlanRecordByUuid" resultType="com.hrym.rpc.app.dao.model.task.TaskPlan">
+        SELECT task_id,item_id,type_id,item_name,unit_desc,custom_id,custom_name,SUM(t.done_num)AS done_num,MIN(start_time) AS start_time,MIN(create_time) AS create_time,MAX(update_time) AS update_time
+        FROM
+        (SELECT a.task_id,a.type_id,a.item_id,a.done_num,a.start_time,a.create_time,a.update_time,a.custom_id,b.item_name,c.unit_desc,d.custom_name
+        FROM t_task_plan a
+        LEFT JOIN t_resource_item b ON a.item_id=b.item_id
+        LEFT JOIN t_task_unit c ON a.type_id=c.unit_type_id
+        LEFT JOIN t_custom_item d ON a.custom_id=d.custom_id AND a.type_id=d.type_id
+        WHERE a.uuid=#{uuid} AND a.is_exit=0 AND a.done_num!=0 AND a.type_id!=10006
+        ORDER BY update_time DESC)AS t
+        GROUP BY t.item_id,t.type_id,custom_id ORDER BY update_time desc
+    </select>
+    <!--查询最近完成某一功课具体历史记录-->
+    <select id="findTaskPlanRecordByItemIdByUuid" resultType="com.hrym.rpc.app.dao.model.task.TaskPlan">
+        SELECT a.task_id,a.type_id,a.item_id,b.item_name,c.unit_desc,a.done_num,a.custom_id,d.custom_name,a.start_time,a.create_time,a.update_time
+        FROM t_task_plan a
+        LEFT JOIN t_resource_item b ON a.item_id=b.item_id
+        LEFT JOIN t_task_unit c ON a.type_id=c.unit_type_id
+        LEFT JOIN t_custom_item d ON a.custom_id=d.custom_id AND a.type_id=d.type_id
+        WHERE a.uuid=#{uuid} AND a.is_exit=0 AND (a.item_id=#{itemId} OR a.custom_id=#{itemId}) AND a.type_id=#{typeId} AND a.done_num!=0
+        ORDER BY a.update_time DESC
+    </select>
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+</mapper>

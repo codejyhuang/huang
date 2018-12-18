@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>FH Maps</title>
+		<style>
+			html { height: 100% }
+			body { height: 100%; margin: 0; padding: 0; background-color: #FFF }
+		</style>
+		<script charset="utf-8" src="http://172.16.14.10:9150/FHGis/api/js"></script>
+		<script>
+			var INIT_LON = 118.74429,
+				INIT_LAT = 31.99597,
+				INIT_ADDRESS = "·é»ð¿Æ¼¼",
+				INIT_ZOOM = 11;
+			var map, geocoder;
+
+			function initialize() {
+				map = new FHMap.Map('map_canvas');
+				var point = new FHMap.LonLat(INIT_LON, INIT_LAT);
+				map.setCenter(point, INIT_ZOOM);
+				parent.document.getElementById("kindeditor_plugin_map_address").value = INIT_ADDRESS;
+			}
+
+			function search(address) {
+				if (!map) return;
+
+				var gc = new FHMap.Protocol.Geocoder({async: false});
+				var items = gc.forward(address);
+				console.log(items);
+				if (items && items.list && items.list.length > 0) {
+					// move to the first result
+					var first = items.list[0];
+					var point = new FHMap.LonLat(first.x, first.y);
+					map.moveTo(point);
+				}
+			}
+		</script>
+	</head>
+	<body onload="initialize();">
+		<div id="map_canvas" style="width:100%; height:100%"></div>
+	</body>
+</html>

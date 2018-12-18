@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8" />
+<meta name="keywords" content="FH地图,FH地图API，FH地图自定义工具，FH地图所见即所得工具" />
+<meta name="description" content="FH地图API自定义地图，帮助用户在可视化操作下生成FH地图" />
+<title>FH地图API自定义地图</title>
+<!--引用FH地图API-->
+<style type="text/css">
+	html,body{margin:0;padding:0;}
+	.iw_poi_title {color:#CC5522;font-size:14px;font-weight:bold;overflow:hidden;padding-right:13px;white-space:nowrap}
+	.iw_poi_content {font:12px arial,sans-serif;overflow:visible;padding-top:4px;white-space:-moz-pre-wrap;word-wrap:break-word}
+</style>
+<script type="text/javascript" src="http://172.16.14.10:9150/FHGis/api/js"></script>
+</head>
+
+<body onload="initMap();">
+    <!--地图容器-->
+    <div style="width:697px;height:550px;border:#ccc solid 1px;" id="map"></div>
+    <div id="log" style="height:40px;"></div>
+	<h3>操作</h3>
+  	<div>
+	  	<ul>
+	  		<li><a href="javascript:;" onclick="operation('setCenter')">设置地图中心</a></li>
+	  		<li><a href="javascript:;" onclick="operation('moveTo')">移动到某坐标</a></li>
+	  		<li><a href="javascript:;" onclick="operation('panTo')">滑动到某坐标</a></li>
+	  		<li><a href="javascript:;" onclick="operation('addLayer')">添加图层</a></li>
+	  		<li><a href="javascript:;" onclick="operation('addToolBar')">添加工具栏</a></li>
+	  		<li><a href="javascript:;" onclick="operation('addMyBtn')">工具栏上添加按钮</a></li>
+	  		<li><a href="javascript:;" onclick="operation('addPopup')">添加Popup</a></li>
+	  		<li><a href="javascript:;" onclick="operation('getViewExtent')">可视范围</a></li>
+	  		<li><a href="javascript:;" onclick="operation('getViewCity')">可视范围内城市</a></li>
+	  	</ul>
+  	</div>
+
+	<script type="text/javascript">
+		var map = null;
+
+		function search(address) {
+			alert(address);
+		}
+
+		//创建地图
+		function initMap() {
+			// [FF]切换模式后报错
+			if (! window.FHMap) {
+				return;
+			}
+
+			map = new FHMap.Map('map',{zoom:14});
+			var lonLat = new FHMap.LonLat(118.79056,32.057);
+			map.setCenter(lonLat);
+		}
+
+		function operation(name){
+			switch(name){
+				//设置地图中心
+				case 'setCenter':
+					var lonLat = new FHMap.LonLat(118.68,31.05);				
+					map.setCenter(lonLat,12);
+					break;
+				//移动到坐标
+				case 'moveTo':
+					var lonLat = new FHMap.LonLat(118.68,31.05);				
+					map.moveTo(lonLat);
+					break;
+				//添加html标记
+				case 'panTo':
+					var lonLat = new FHMap.LonLat(118.77,32.00);				
+					map.panTo(lonLat);
+					break;
+				//添加图层
+				case 'addLayer':
+					var layer = new FHMap.Layer("test");
+					map.addLayer(layer);
+					break;
+				//清除工具栏
+				case 'addToolBar':
+					var layer = new FHMap.Layer.Vector("test");
+					map.addLayer(layer);
+					//绑定工具栏到指定图层
+					toolBar = new FHMap.Control.Toolbar(layer,
+						['Navigation','Line','Rectangle','Circle','Polygon','Select','Clear','MeasureLength','MeasureArea'],
+						{
+							finishDraw:function(msg){
+								alert(msg.geometry)
+							},
+							featureSelect:function(msg){
+								alert(msg.geometry)
+							}
+						}
+					);
+					break;
+				//添加自定义按钮
+				case 'addMyBtn':
+					var btn = new FHMap.Control.Button({
+						//按钮class:
+						displayClass: 'myBtn',
+						trigger: function(){
+							alert('谁点我！');
+						}
+					});
+					if(toolBar){
+						toolBar.addControl(btn);
+					}
+					break;
+				//添加Popup
+				case 'addPopup':
+					var html = [];
+					html.push("<label class='oas-title'>地点：</label><span class='oas-title'>" + 111+"</span><br>");
+					html.push("<label class='oas-title'>轨迹数量：</label><span class='oas-title'>" + 111+"</span><br>");
+					html.push("<label class='oas-title'>最近一次：</label><span class='oas-title'>" + '2014-11-04 09:30:59'+"</span>");
+					var popup = new FHMap.Popup({contentHTML:html.join(""),lonlat:new FHMap.LonLat(118.79059,32.057)});
+					map.addPopup(popup);
+					break;
+				//可视范围
+				case 'getViewExtent':
+					alert(map.getViewExtent());
+					break;
+				//可视范围内城市
+				case 'getViewCity':
+					map.getViewCity(function(data){
+						alert(data.name);
+					});
+					break;
+				case 'rightMenu':
+					var menus = [{splitLine: true},{name:'自定义'},{name:'自定义2',click:function(){alert('做自己想做的事')}}];
+					var rightMenu =  new FHMap.Control.RightMenu(menus);
+					map.addControl(rightMenu);
+					rightMenu.addMenu({splitLine: true});
+					rightMenu.addMenu({name:'移动到...', sub:[{name:'本地磁盘(C:)'},{name:'本地磁盘(D:)'},{name:'本地磁盘(E:)'}]});
+					rightMenu.addMenus([{splitLine: true},{name:'自定义3'},{name:'自定义4'}]);
+					break;
+			}
+		}
+	</script>
+</body>
+</html>

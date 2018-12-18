@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrym.manager.dao.QuestionMgrMapper" >
+  <resultMap id="BaseResultMap" type="com.hrym.appcommon.model.question.Question" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="uuid" property="uuid" jdbcType="INTEGER" />
+    <result column="question_name" property="questionName" jdbcType="VARCHAR" />
+    <result column="is_ anonymous" property="isAnonymous" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="INTEGER" />
+    <result column="answer_num" property="answerNum" jdbcType="INTEGER" />
+  </resultMap>
+  <update id="addAnswerNum">
+    update `t_resource_question`
+    set answer_num = ifNull(answer_num,0) + 1 , update_time = #{updateTime}
+    where id = #{questionId}
+  </update>
+  <update id="subAnswerNum">
+    update `t_resource_question`
+    set answer_num = answer_num - 1
+    where id = #{questionId}
+  </update>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, uuid, question_name, `is_ anonymous`, create_time, update_time, answer_num
+    from `t_resource_question`
+    <include refid="base_where"/>
+  </select>
+  <sql id="base_where">
+    <where>
+      <if test="startTimeis!=null">
+        and create_time > #{startTimeis}
+      </if>
+      <if test="endTimeis!=null">
+        and create_time lt;= #{endTimeis}
+      </if>
+      <if test="keywords!=null">
+        and question_name like concat('%',#{keywords},'%')
+      </if>
+    </where>
+  </sql>
+</mapper>

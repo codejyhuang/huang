@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="hrym-rpc-service"/>
+
+    <dubbo:registry address="zookeeper://${zk.conf}"/>
+    <!--<dubbo:monitor protocol="registry"/>-->
+    <dubbo:provider protocol="dubbo" timeout="5000" delay="-1" retries="0"/>
+    <dubbo:protocol name="dubbo" port="20884"  accepts="1000"/>
+    <dubbo:protocol name="hessian" port="20887" server="jetty" accepts="1000"/>
+
+    <bean id="loginService" class="com.hrym.rpc.auth.service.LoginServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.auth.api.LoginService" ref="loginService"  />
+
+    <bean id="taskAddService" class="com.hrym.rpc.auth.service.TaskAddServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.auth.api.TaskAddService" ref="taskAddService" timeout="10000"   />
+
+    <bean id="fileUploadService" class="com.hrym.rpc.fdfsdfs.service.FdfsServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.fdfsdfs.FdfsService" ref="fileUploadService" protocol="hessian" timeout="40000"  />
+
+    <bean id="taskService" class="com.hrym.rpc.auth.service.TaskServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.auth.api.TaskService" ref="taskService"   />
+
+    <bean id="associationAddService" class="com.hrym.rpc.association.service.AssociationAddServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.association.AssociationAddService" ref="associationAddService"   />
+
+    <bean id="myHomepageService" class="com.hrym.rpc.mine.service.MyHomepageServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.mine.MyHomepageService" ref="myHomepageService"   />
+
+    <bean id="suggestService" class="com.hrym.rpc.mine.service.SuggestServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.mine.SuggestService" ref="suggestService"   />
+
+    <bean id="esSuggestService" class="com.hrym.rpc.mine.service.ESSuggestServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.mine.ESSuggestService" ref="esSuggestService"   />
+
+    <bean id="associationHandleService" class="com.hrym.rpc.association.service.AssociationHandleServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.association.AssociationHandleService" ref="associationHandleService"   />
+
+    <bean id="resourceService" class="com.hrym.rpc.association.service.ResourceServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.association.ResourceService" ref="resourceService"   />
+
+    <bean id="htmlViewService" class="com.hrym.rpc.auth.service.HtmlViewServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.auth.api.HtmlViewService" ref="htmlViewService"   />
+
+    <bean id="bluetoothService" class="com.hrym.rpc.auth.service.BluetoothServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.auth.api.BluetoothService" ref="bluetoothService"   />
+
+    <bean id="historyRecordService" class="com.hrym.rpc.auth.service.HistoryRecordServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.auth.api.HistoryRecordService" ref="historyRecordService"   />
+
+    <bean id="bookService" class="com.hrym.rpc.auth.service.BookServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.auth.api.BookService" ref="bookService"   />
+
+    <bean id="meditationService" class="com.hrym.rpc.auth.service.MeditationServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.auth.api.MeditationService" ref="meditationService"   />
+
+    <bean id="resourceItemLessonService" class="com.hrym.rpc.auth.service.ResourceItemLessonServiceImpl"/>
+    <dubbo:service interface="com.hrym.rpc.auth.api.ResourceItemLessonService" ref="resourceItemLessonService"   />
+
+
+
+</beans>

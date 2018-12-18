@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.mapper.association.AssociationMemberMapper">
+
+    <!--为dao接口方法提供sql语句配置 -->
+    <!--通过社群ID查找对应的所有社群成员-->
+    <select id="findMemberListById" resultType="com.hrym.appcommon.model.association.AssociationMember">
+        SELECT user_type,user_id,intro,nickname "userInfo.nickName",avatar "userInfo.avatar"
+        FROM t_association_member
+        LEFT JOIN t_user_account ON user_id=uuid
+        WHERE idt_association=#{id} and nickname like '%${filterStr}%'
+    </select>
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+</mapper>

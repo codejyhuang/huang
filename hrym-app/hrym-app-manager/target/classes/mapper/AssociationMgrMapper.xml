@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.manager.dao.ArticleMgrMapper">
+
+    <!--为TaskContentMapper的接口方法提供sql语句配置 -->
+    <select id="findAllArticle" resultType="com.hrym.appcommon.model.association.Article">
+        SELECT
+        e.article_abstract,e.article_url,e.status_article,e.idt_article,e.special_column_id,e.article_title,e.user_id,e.create_time,e.update_time,n.idt_special_column"specialColumn.idtSpecialColumn",n.column_name"specialColumn.columnName",n.column_type"specialColumn.columnType"
+        FROM t_article e LEFT JOIN t_special_column n ON e.special_column_id = n.idt_special_column
+    </select>
+
+    <!-- 文章搜索-->
+    <!-- 文章名称搜索-->
+    <select id="searchAllArticle" resultType="com.hrym.appcommon.model.association.Article">
+        SELECT
+        e.article_abstract,e.article_url,e.status_article,e.idt_article,e.special_column_id,e.article_title,e.user_id,e.create_time,e.update_time,n.idt_special_column
+        "specialColumn.idtSpecialColumn",n.column_name "specialColumn.columnName",n.column_type
+        "specialColumn.columnType"
+        FROM t_article e LEFT JOIN t_special_column n ON e.special_column_id = n.idt_special_column
+        WHERE e.article_title LIKE '%${articleTitle}%'
+    </select>
+
+    <!--专栏名称搜索-->
+    <select id="searchAllSpecialName" resultType="com.hrym.appcommon.model.association.SpecialColumn">
+        SELECT e.article_abstract "article.articleAbstract",e.article_url "article.articleUrl",e.status_article
+        "article.statusArticle",e.idt_article "article.idtArticle",e.special_column_id
+        "article.specialColumnId",e.article_title "article.articleTitle",e.user_id "article.userId",e.create_time
+        "article.createTime",e.update_time "article.updateTime",n.idt_special_column,n.column_name ,n.column_type
+        FROM t_special_column n LEFT JOIN t_article e ON e.special_column_id = n.idt_special_column
+        WHERE n.column_name LIKE '%${columnName}%'
+    </select>
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+</mapper>

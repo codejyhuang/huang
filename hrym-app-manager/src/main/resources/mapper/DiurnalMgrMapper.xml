@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.app.dao.DiurnalDataMapper">
+
+    <!--根据表名查找所有的内容-->
+    <select id="findAllUserData" parameterType="java.lang.String" resultType="com.hrym.rpc.app.dao.model.system.DiurnalData" statementType="STATEMENT">
+        select id,uuid,nick_name,real_name,recent_time,created_time,count from ${tableName} WHERE uuid &gt;0  ORDER BY recent_time DESC
+    </select>
+
+    <!--查找今日登录数-->
+    <select id="findAllUserCount" parameterType="java.lang.String" resultType="com.hrym.rpc.app.dao.model.system.UserData" statementType="STATEMENT">
+       select  count(recent_time)as recount from ${tableName}
+    </select>
+    <select id="findUserCount" parameterType="java.lang.String" resultType="com.hrym.rpc.app.dao.model.system.DiurnalData" statementType="STATEMENT">
+        select  count(recent_time)as recount from ${tableName}
+    </select>
+<!--今日注册数-->
+    <select id="findUserCountByCreateTime" parameterType="java.lang.String" resultType="com.hrym.rpc.app.dao.model.system.DiurnalData" statementType="STATEMENT">
+        select count from ${tableName} WHERE count   &gt; 0
+    </select>
+    <!--&lt;!&ndash;查看至今日注册人数&ndash;&gt;-->
+    <!--<select id="findUserCountByCreateTime" parameterType="java.lang.String" resultType="com.hrym.rpc.app.dao.model.system.DiurnalData" statementType="STATEMENT">-->
+       <!--SELECT COUNT(created_time)as count FROM ${tableName} -->
+    <!--</select>-->
+    <!--
+        如果上面语句传入tabName=t_student、c_name=zhangsan，则得到语句如下：
+            select * from t_student where c_name=zhangsan
+        明显c_name=zhangsan这里需要引号。
+        修改如下：在传递参数的时候就加上引号：
+        tabName=t_student
+        c_name=‘zhangsan’
+        这样就可以了
+    -->
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+</mapper>

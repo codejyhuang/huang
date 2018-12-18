@@ -1,0 +1,16 @@
+com/hrym/rpc/mine/MyHomepageService.class
+com/hrym/rpc/mine/SuggestService.class
+com/hrym/rpc/auth/api/TaskAddService.class
+com/hrym/rpc/auth/api/TaskService.class
+com/hrym/rpc/association/ResourceService.class
+com/hrym/rpc/auth/api/HtmlViewService.class
+com/hrym/rpc/auth/api/LoginService.class
+com/hrym/rpc/auth/api/BluetoothService.class
+com/hrym/rpc/auth/api/BookService.class
+com/hrym/rpc/auth/api/HistoryRecordService.class
+com/hrym/rpc/auth/api/ResourceItemLessonService.class
+com/hrym/rpc/mine/ESSuggestService.class
+com/hrym/rpc/association/AssociationAddService.class
+com/hrym/rpc/auth/api/MeditationService.class
+com/hrym/rpc/fdfsdfs/FdfsService.class
+com/hrym/rpc/association/AssociationHandleService.class

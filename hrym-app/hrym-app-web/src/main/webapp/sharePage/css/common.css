@@ -1,0 +1,54 @@
+    /* common */
+
+    body,
+    div,
+    dl,
+    dt,
+    dd,
+    ul,
+    ol,
+    li,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    pre,
+    form,
+    fieldset,
+    input,
+    textarea,
+    p,
+    blockquote,
+    th,
+    td {
+        margin: 0;
+        padding: 0;
+    }
+
+    ul,
+    ol {
+        list-style: none
+    }
+
+    /* @font-face {
+        font-family: 'PingFangSC-Regular';
+        src: url('../iconfont/PingFang/PingFangRegular.ttf');
+    }
+
+    @font-face {
+        font-family: 'PingFangSC-Medium';
+        src: url('../iconfont/PingFang/PingFangMedium.ttf');
+    }
+    @font-face {
+        font-family: 'PingFangSC';
+        src: url('../iconfont/PingFang/PingFangHeavy.ttf');
+    } */
+
+    html,
+    body {
+        /* height: 100%; */
+        font-size: 26.667vw;
+        font-family: "PingFang SC","Microsoft YaHei";
+    }

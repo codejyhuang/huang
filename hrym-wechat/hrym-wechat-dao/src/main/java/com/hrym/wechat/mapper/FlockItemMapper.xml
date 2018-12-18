@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.FlockItemMapper">
+
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into t_flock_item(flock_id,item_id,item_content_id,unit,creater_id,`order`,type,day_done_num,total_done_num)
+        values(#{flockId},#{itemId},#{itemContentId},#{unit},#{createId},#{order},#{type},#{dayDoneNum},#{totalDoneNum})
+    </insert>
+    <update id="updateFlockItem">
+        update t_flock_item
+        set state = #{state}
+        where id = #{id}
+    </update>
+    <update id="updateStateByFlockId">
+        update t_flock_item set state = #{state}
+        where flock_id = #{flockId}
+    </update>
+
+    <select id="queryByFlockId" resultType="com.hrym.wechat.entity.FlockItem">
+        select id,flock_id,item_id,item_content_id,unit,creater_id,`order`,type,day_done_num,total_done_num
+        from t_flock_item
+        where flock_id = #{id} and state = 0
+    </select>
+    <select id="selectByFlockId" resultType="com.hrym.wechat.entity.FlockItem">
+  	    select id,flock_id,f.item_id,f.item_content_id,f.unit,creater_id,`order`,f.type,day_done_num,total_done_num,
+	    lesson_name
+        from t_flock_item f
+	    left join t_flock_lesson_view v
+		on f.item_id = v.item_id and f.item_content_id = v.item_content_id and f.type = v.type
+        where flock_id = #{id} and state = 0
+    </select>
+
+    <select id="findFlockCustomTotalDoneNum" resultType="com.hrym.wechat.entity.FlockItem">
+        SELECT m.item_id,m.total_done_num,n.custom_name as item_name FROM t_flock_item m
+LEFT JOIN t_resource_item_custom n  ON n.custom_id=m.item_id WHERE m.flock_id =#{flockId} AND m.item_id=#{itemId} AND m.type =#{type}
+    </select>
+
+    <select id="findFlockLessonTotalDoneNum" resultType="com.hrym.wechat.entity.FlockItem">
+        SELECT m.item_id,m.total_done_num,n.version_name FROM t_flock_item m
+LEFT JOIN ${tableName} n  ON n.item_id=m.item_id and m.item_content_id =n.item_content_id
+WHERE m.flock_id =#{flockId} AND m.item_id=#{itemId} AND m.type =#{type} AND m.item_content_id =#{itemContentId};
+    </select>
+    <select id="findItemCustomName" resultType="com.hrym.wechat.entity.FlockItem">
+      SELECT custom_name as item_name FROM t_resource_item_custom WHERE custom_id = #{itemId}
+    </select>
+    <select id="queryByFlockIdAndItemIdAndContentIdAndType" resultType="com.hrym.wechat.entity.FlockItem">
+        select id,flock_id,item_id,item_content_id,unit,creater_id,`order`,type,day_done_num,total_done_num,state
+        from t_flock_item
+        where flock_id = #{flockId} and type = #{type}
+        <include refid="base_sql"/>
+    </select>
+    <select id="queryByFlockItemListByFlockId" resultType="com.hrym.wechat.entity.FlockItem">
+        SELECT m.day_done_num,w.lesson_name,m.item_id,m.item_content_id,m.type,m.unit
+        FROM t_flock_item m
+        left JOIN t_flock_lesson_view w on w.item_id =m.item_id AND w.item_content_id = w.item_content_id AND w.type=m.type
+        WHERE flock_id =#{flockId} AND state =0
+    </select>
+    <select id="queryByFlockIdJoinView" resultType="com.hrym.wechat.entity.FlockItem">
+        select t.id,flock_id,t.item_id,t.item_content_id,creater_id,n.unit,`order`,t.type,day_done_num,total_done_num,t.state,v.lesson_name
+        from t_flock_item  t
+        left join t_flock_lesson_view v
+        on v.item_id = t.item_id and v.item_content_id = t.item_content_id and v.type = t.type
+		left join t_item_user_unit n
+        on v.item_id = n.item_id and v.item_content_id = n.item_content_id and n.type = t.type and n.uuid = 2199
+        where flock_id = #{id} and t.state = 0
+    </select>
+
+    <select id="queryByFlockItemByFlockId" resultType="com.hrym.wechat.entity.FlockItem">
+        SELECT flock_id,item_id,item_content_id,type FROM t_flock_item
+          WHERE flock_id =#{flockId} AND state=0
+    </select>
+
+    <sql id="base_sql">
+        <if test="type==1">
+            and item_id = #{itemId}
+        </if>
+        <if test="type!=1">
+            and item_id = #{itemId} and item_content_id = #{itemContentId}
+        </if>
+    </sql>
+</mapper>

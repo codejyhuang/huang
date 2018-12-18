@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.mapper.auth.LoginMapper">
+
+    <!--为dao接口方法提供sql语句配置 -->
+    <insert id="saveLoginInfo">
+        INSERT INTO
+        t_login(uuid,token,is_social_login,login_time,phone_model,os,os_version)
+        VALUES
+        (#{uuid},#{token},#{isSocialLogin},#{loginTime},#{phoneModel},#{os},#{osVersion})
+    </insert>
+
+    <select id="findLoginInfoByUuid" resultType="com.hrym.appcommon.model.task.LoginInfo">
+        SELECT
+        uuid,token,is_social_login,login_time,phone_model,os,os_version
+        FROM
+        t_login
+        WHERE uuid = #{uuid}
+    </select>
+
+    <update id="updateLoginInfoByToken">
+        UPDATE t_login
+        SET uuid = #{lg.uuid},is_social_login = #{lg.isSocialLogin},
+        login_time = #{lg.loginTime},phone_model=#{lg.phoneModel},os=#{lg.os},os_version=#{lg.osVersion}
+        WHERE
+        token = #{lg.token}
+    </update>
+
+    <select id="findLoginInfoByToken" resultType="com.hrym.appcommon.model.task.LoginInfo">
+        SELECT
+        uuid,token,is_social_login,login_time,phone_model,os,os_version
+        FROM
+        t_login
+        WHERE token = #{token}
+    </select>
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+</mapper>

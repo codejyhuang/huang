@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrym.manager.dao.FlockMgrMapper">
+    <resultMap id="BaseResultMap" type="com.hrym.appcommon.model.flock.Flock">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="intro" column="intro"/>
+        <result property="privacy" column="privacy"/>
+        <result property="dedicationVerses" column="dedication_verses"/>
+        <result property="createTime" column="create_time"/>
+        <result property="dayDoneNum" column="day_done_num"/>
+        <result property="totalDoneNum" column="total_done_num"/>
+        <result property="itemJoinNum" column="item_join_num"/>
+        <result property="itemNum" column="item_num"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="state" column="state"/>
+        <association property="userInfo" javaType="com.hrym.appcommon.model.task.UserInfo" columnPrefix="u_">
+            <id property="uuid" column="uuid"/>
+            <result property="nickName" column="nickname"/>
+            <result property="avatar" column="avatar"/>
+        </association>
+    </resultMap>
+    <resultMap id="resultMap" type="com.hrym.appcommon.model.flock.FlockItem">
+        <id property="id" column="id"/>
+        <result property="totalDoneNum" column="total_done_num"/>
+        <result property="versionName" column="lesson_name"/>
+    </resultMap>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        id,f.name,intro,privacy,dedication_verses,create_time,day_done_num,total_done_num,item_join_num,item_num,avatar_url,
+        u.uuid u_uuid ,u.avatar u_avatar ,u.nickname u_nickname
+        from t_flock f
+        left join t_user_account u on f.creater_id = u.uuid
+
+    </select>
+    <select id="queryFlockItem" resultMap="resultMap">
+        select sum(num) total_done_num,lesson_name from
+        t_flock_record_view r
+        left join t_flock_lesson_view v
+        on v.item_id = r.item_id and v.item_content_id = r.item_content_id and v.type = r.type
+        where r.flock_id = #{id}
+        <include refid="base_where"/>
+        group by r.item_id,r.item_content_id,r.type
+
+    </select>
+    <select id="queryRegisterUser" resultType="java.lang.Integer">
+        select count(uuid) from
+        t_user_account
+        where open_id is not null
+        <include refid="base_user"/>
+    </select>
+    <select id="queryUseUser" resultType="java.lang.Integer">
+        select count(DISTINCT(uuid))
+        from t_flock_user
+    </select>
+    <sql id="base_where">
+        <if test="startTimeis!=null">
+            and r.create_time > #{startTimeis}
+        </if>
+        <if test="endTimeis!=null">
+            and r.create_time  &lt;= #{endTimeis}
+        </if>
+    </sql>
+    <sql id="base_user">
+        <if test="startTimeis!=null">
+            and created_time > #{startTimeis}
+        </if>
+        <if test="endTimeis!=null">
+            and created_time  &lt;= #{endTimeis}
+        </if>
+    </sql>
+</mapper>

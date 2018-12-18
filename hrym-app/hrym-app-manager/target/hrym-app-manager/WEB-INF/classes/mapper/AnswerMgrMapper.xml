@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrym.manager.dao.AnswerMgrMapper">
+    <resultMap id="BaseResultMap" type="com.hrym.appcommon.model.question.Answer">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="uuid" property="uuid" jdbcType="INTEGER"/>
+        <result column="question_id" property="questionId" jdbcType="BIGINT"/>
+        <result column="answer_content" property="answerContent" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime" jdbcType="INTEGER"/>
+        <result column="like_num" property="likeNum" jdbcType="INTEGER"/>
+        <result column="disagree_num" property="disagreeNum" jdbcType="INTEGER"/>
+        <result column="inform_num" property="informNum" jdbcType="INTEGER"/>
+        <result column="thank_num" property="thankNum" jdbcType="INTEGER"/>
+        <result column="is_check" property="isCheck" jdbcType="INTEGER"/>
+        <result column="head_image" property="headImage" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+
+    </resultMap>
+        <insert id="insert" parameterType="com.hrym.appcommon.model.question.Answer" useGeneratedKeys="true"
+                keyProperty="id">
+    insert into `t_resource_answer` (uuid, question_id, answer_content,
+      create_time, update_time, like_num,
+      disagree_num, inform_num, thank_num,
+      is_check, head_image, user_name
+      )
+    values (#{uuid,jdbcType=INTEGER}, #{questionId,jdbcType=BIGINT}, #{answerContent,jdbcType=VARCHAR},
+      #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, #{likeNum,jdbcType=INTEGER},
+      #{disagreeNum,jdbcType=INTEGER}, #{informNum,jdbcType=INTEGER}, #{thankNum,jdbcType=INTEGER},
+      #{isCheck,jdbcType=INTEGER}, #{headImage,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}
+      )
+  </insert>
+    <update id="updateByprimaryKey">
+        update `t_resource_answer` set
+        head_image = #{headImage},
+        answer_content = #{answerContent},
+        user_name = #{userName},
+        update_time = #{updateTime}
+        where id = #{id}
+    </update>
+    <delete id="deleteByPrimaryKey">
+         delete from `t_resource_answer`
+    where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <select id="selectByQuestionId" resultMap="BaseResultMap">
+    select id, uuid, question_id, answer_content, create_time, update_time, like_num,
+    disagree_num, inform_num, thank_num, is_check, head_image, user_name
+    from `t_resource_answer`
+    where question_id = #{questionId}
+    order by create_time desc
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, uuid, question_id, answer_content, create_time, update_time, like_num,
+    disagree_num, inform_num, thank_num, is_check, head_image, user_name
+    from `t_resource_answer`
+  </select>
+    <select id="selectByPrimaryKey" resultType="com.hrym.appcommon.model.question.Answer">
+        select id, uuid, question_id, answer_content, create_time, update_time, like_num,
+    disagree_num, inform_num, thank_num, is_check, head_image, user_name
+    from `t_resource_answer`
+    where id = #{id,jdbcType=BIGINT}
+    </select>
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.FlockItemUserCountMapper">
+    <insert id="save">
+        insert into t_flock_item_user_count(flock_id,item_id,item_content_id,uuid,total,`type`)
+        values(#{flockId},#{itemId},#{itemContentId},#{uuid},#{total},#{type})
+    </insert>
+
+
+    <select id="queryByFlockIdAndItemIdAndItemContentIdAndType"
+            resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select `order`,uuid,num,nickname,avatar from (select @rownum:=@rownum+1 `order`,q.* from
+        (
+        select r.uuid,sum(total) num
+        ,nickname,avatar
+        from t_flock_item_user_count r
+        left join t_user_account u
+        on r.uuid = u.uuid
+        where flock_id = #{flockId}
+        <include refid="base_sql"/>
+        group by r.uuid
+        order by num desc
+        ) q ,(SELECT @rownum:=0) rown) temp
+    </select>
+    <!--<select id="queryByFlockIdAndItemIdAndItemContentIdAndType"-->
+            <!--resultType="com.hrym.wechat.entity.FlockRecordDO">-->
+        <!--select `order`,uuid,num,nickname,avatar from (select @rownum:=@rownum+1 `order`,q.* from-->
+        <!--(-->
+        <!--select r.uuid,sum(total) num-->
+        <!--,nickname,avatar-->
+        <!--from t_flock_item_user_count r-->
+        <!--left join t_user_account u-->
+        <!--on r.uuid = u.uuid-->
+        <!--where flock_id = #{flockId}-->
+        <!--<include refid="base_sql"/>-->
+        <!--group by r.uuid-->
+        <!--order by num desc-->
+        <!--) q ,(SELECT @rownum:=0) rown) temp-->
+    <!--</select>-->
+    <select id="queryByFlockIdAndItemIdAndItemContentIdAndTypeAndUuid"
+            resultType="com.hrym.wechat.entity.FlockItemUserCount">
+        select flock_id,item_id,item_content_id,uuid,total,`type`
+        from t_flock_item_user_count
+        where uuid = #{uuid} and flock_id = #{flockId}
+        <include refid="base_sql"/>
+    </select>
+    <!--<select id="queryByUuidFromItemCount" resultType="com.hrym.wechat.entity.FlockRecordDO">-->
+        <!--select id,`order`,uuid,num,nickname,avatar,-->
+        <!--(select count(id) from t_parse_record where relation_type = 4 and relation_id like temp.id and item_id = #{itemId} and content_id = #{itemContentId} and item_type = #{type}) likeNum,-->
+        <!--(select uuid from t_parse_record where relation_type = 4 and `from` = #{uuid} and  relation_id like temp.id and item_id = #{itemId} and content_id = #{itemContentId} and item_type = #{type}) has_like-->
+        <!--from (select @rownum:=@rownum+1 `order`,q.* from-->
+        <!--(-->
+        <!--select r.id,r.uuid,sum(total) num-->
+        <!--,nickname,avatar-->
+        <!--from t_flock_item_user_count r-->
+        <!--left join t_user_account u-->
+        <!--on r.uuid = u.uuid-->
+        <!--where flock_id = #{flockId}-->
+        <!--<include refid="base_sql"/>-->
+        <!--group by r.uuid-->
+        <!--order by num desc-->
+        <!--) q ,(SELECT @rownum:=0) rown) temp where temp.uuid = #{uuid}-->
+    <!--</select>-->
+    <select id="queryByUuidFromItemCount" resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select `order`,uuid,num,nickname,avatar from (select @rownum:=@rownum+1 `order`,q.* from
+        (
+        select r.uuid,sum(total) num
+        ,nickname,avatar
+        from t_flock_item_user_count r
+        left join t_user_account u
+        on r.uuid = u.uuid
+        where flock_id = #{flockId}
+        <include refid="base_sql"/>
+        group by r.uuid
+        order by num desc
+        ) q ,(SELECT @rownum:=0) rown) temp where temp.uuid = #{uuid}
+    </select>
+    <select id="queryCountByItemIdAndContentIdAndType" resultType="java.lang.Integer">
+        	select count(id) from t_flock_item
+				where type = #{type}
+				<include refid="base_count"/>
+
+    </select>
+
+    <sql id="base_sql">
+        <if test="type==1">
+            and item_id = #{itemId} and type = #{type}
+        </if>
+        <if test="type!=1">
+            and item_id = #{itemId} and item_content_id = #{itemContentId} and type = #{type}
+        </if>
+    </sql>
+    <sql id="base_count">
+        <if test="type==1">
+          and item_id = #{itemId} group by item_id,type
+        </if>
+        <if test="type!=1">
+          and item_id = #{itemId} and item_content_id = #{itemContentId}  group by item_id,item_content_id,type
+        </if>
+    </sql>
+</mapper>

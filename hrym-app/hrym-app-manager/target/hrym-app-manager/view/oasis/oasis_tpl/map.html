@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="zh-cn" style="height:100%">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+        <title>mapShow</title> 
+           <link type="text/css" rel="stylesheet" href="../css/oasis.css" >   
+           <link type="text/css" rel="stylesheet" href="../css/oasis-icon.css" >
+           <script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+           <script type="text/javascript" src="../js/jquery.validate.js"></script>
+           <script type="text/javascript" src="../js/oasis.js"></script>
+           <script type="text/javascript">
+           var curWwwPath=window.document.location.href;
+           var pathName=window.document.location.pathname;
+           var pos=curWwwPath.indexOf(pathName);
+           var localhostPaht=curWwwPath.substring(0,pos);
+           var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
+           var getMapURL = unescape(LocalStorage.getItem("getMapURL"))||(localhostPaht+projectName+"/system/Constant!getMapConstant.action");
+           var urlDate;
+           $.ajax({
+            url:getMapURL,
+            async:false,
+            dataType:"json",
+            success:function(data){
+              if(data.status==200){
+                urlDate=data;
+                var url="http://"+data.data.IP+":"+data.data.PORT+"/FHGis/api/js";
+                document.write("<script type='text/javascript' src='"+url+"'><\/script>");
+                centerData=data.data.mapCenter;
+              }else{
+                 OasMsg.open({type:'error',time:0,message:'获取地图组件资源失败',modal:true});
+              }
+            },
+            error:function(XMLHttpRequest, textStatus, errorThrown){
+                OasMsg.open({type:'error',time:0,message:'获取地图组件资源失败',modal:true});
+            }
+           });
+           </script>
+    <style type="text/css">
+    .search {
+      margin-bottom: 8px;
+    }
+    .search >*{
+      float: left;
+    }
+    .search label{
+      line-height: 30px;
+    }
+    .search .tip{
+      margin-left: 15px;
+    }
+    .search .oasicon-help{
+       line-height: 30px;
+    }
+    .search .type-div{
+      margin-right: 10px;
+    }
+    .address-input,.lonlat-input{
+      width: 680px;
+    }
+    .search #address,.search #lon-lat{
+      width: 630px;
+    }
+    .loadingError{
+      position: absolute;
+      top:50%;
+      margin: -110px auto 0 200px; 
+    }
+    .noData{
+      position: absolute;
+      top:50%;
+      width: 298px;
+      margin: -110px 0 auto 0;
+    }
+    .noData .oas-mascot-text{
+      width:160px;
+    }
+   .noData .oas-mascot-big{
+      width: 120px;
+   }
+    .map-wrap{
+      position: relative;
+      padding: 0 0 0 0;
+      border-top: 1px solid #e4e4e4;
+    }
+    .left-bar{
+      position: absolute;
+      left: -298px;
+      top:0;
+      width: 298px;
+      overflow:auto;
+    }
+    .left-bar  li{
+      border-top: 1px dashed #d9dade;
+      padding: 8px 0;
+    }
+    .left-bar  li.selected{
+      background-color: #f1f2f6;
+    }
+    .left-bar  li:first-child{
+      border:0;
+    }
+    .word-blue{
+      color: #005e91;
+    }
+    .left-bar  li .info{
+      padding:0 10px 0 35px;
+      position:relative;
+    }
+    .left-bar  li .sign{
+      position:absolute;
+    }
+    .left-bar  li p{
+      color:#b7b7b7;
+    }
+    .flexible-bar{
+      cursor: pointer;
+      position: absolute;
+      width: 6px;
+      top:0;
+      bottom: 0;
+      left:0;
+      border-radius: 4px;
+      z-index: 99990;
+    }
+    .flexible-bar .background{
+      position: absolute;
+      top:50%;
+      margin-top: -21px;
+      background-color: #8a9fbc;
+      width: 6px;
+      height: 42px;
+    }
+    .flexible-bar .background:hover{
+      background-color: #487db9;
+    }
+    .flexible-bar .background a{
+      display: block;
+      width: 6px;
+      height: 42px;
+    }
+    .flexible-bar .background a .oasicon.oasicon-arrow-left{
+        color: #fff;
+        padding: 0;
+        margin: 0;
+        margin-left: -4px;
+        font-size: 12px;
+        margin-top:14px;
+    }
+    .flexible-bar .background a .oasicon.oasicon-arrow-right{
+        color: #fff;
+        padding: 0;
+        margin: 0;
+        margin-left: -3px;
+        font-size: 12px;
+        margin-top:14px;
+    }
+    .disable{
+      display: none;
+    }
+    li .pic{
+      position:absolute;
+      width: 32px;
+      height: 32px;
+      right: 10px;
+      bottom:0;
+    }
+    li .pic.unicom{
+      background-image: url(../img/unicom.png);
+    }
+    li .pic.mobilecom{
+      background-image: url(../img/mobilecom.png);
+    }
+    li .pic.telecom{
+      background-image: url(../img/telecom.png);
+    }
+
+    .info p.content{
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 240px;
+    }
+    .bottom-fix{
+      display:none;
+      position: absolute;
+      top: 0;
+      left:0;
+      right:0;
+      z-index: 20000;
+     
+    }
+    .map-body{
+      position: relative;
+    }
+    .mapLoad{display:inline-block;width:32px;height:30px;background-repeat:no-repeat;background-position:0 0;}
+    .mapLoad .text{float:left;width:23px;height:23px;text-align:center; line-height:23px;font-size:12px;font-family:'微软雅黑'; font-weight:bold;}
+    .mapLoad.red{color:#e60012;background-image:url(../img/mapload_red.png);} 
+    .mapLoad.blue{color:#00a0e9;background-image:url(../img/mapload_blue.png);}
+    </style>
+    </head>
+    <body >  
+      <form  method="get" id="checkSearch">
+        <div class="search clearfix">
+            <label>快速定位：</label>
+            <div class="type-div">
+              <select id="type">
+                  <option value='地区名称'>地区名称</option>
+                  <option value='经纬度'>经纬度</option>
+              </select>
+            </div>
+            <div class="address-input">
+              <input id="address"  type="text" name="address" class="think-input" placeholder="支持模糊搜索"/>
+            </div>
+            <div class="lonlat-input disable">
+               <input id="lon-lat" type="text" name="lonLat" placeholder="中国经度范围：73.55-135.084，纬度范围：3.85-53.55，多个经纬度格式为： 经度 纬度,经度 纬度"/>
+            </div>
+            <input type="button" id="changeClick" style="display:none"/>
+            <input type="button" class="nb-btn nb-submit " id="check" onclick="search()" value="搜 索"/>
+            <div class="tip">
+              <a  class="oasicon oasicon-help" ></a>
+            </div>
+        </div>
+       </form>
+
+       <div class="bubbleAddr">提示：支持模糊搜索！</div>
+       <div class="oas-all-page clearfix loadingError disable" >
+            <div class="oas-mascot-img" >
+                <div class="oas-mascot-big "  ></div>
+            </div>
+            <div class="oas-mascot-text ">
+                <p>oh!</p>
+                <p class="content">页面加载失败！</p>
+            </div>
+        </div>
+         <div class="map-wrap" id="map-wrap">
+              <div class="left-bar " id="left-bar">
+               <div class="oas-all-page clearfix noData " >
+                   <div class="oas-mascot-img" >
+                       <div class="oas-mascot-big oas-mascot-nodata" ></div>
+                   </div>
+                   <div class="oas-mascot-text ">
+                       <p>oh!</p>
+                       <p class="content">暂无数据！</p>
+                   </div>
+               </div>
+                   <ul >
+
+                   </ul>
+                 </div>
+            <div class="flexible-bar" id="flexible-bar">
+                <div class="background" id="background">
+                    <a class="arrow"  href="javascript:;"><i class="oasicon oasicon-arrow-right" id="oasicon-arrow"></i></a>
+                </div>
+            </div>
+            <div class="map-body">
+              <div id="map"></div>
+              <div class="bottom-fix">
+                <div class="oas-alert oas-alert-error " >
+                    <i class="oasicon oasicon-tip"></i>
+                    <span class="oas-text">提示：双击地图上的数字可以将地图最大化！</span>
+                    <a class="oas-alert-close" href="javascript:;">
+                        <i class="oasicon oasicon-close"></i>
+                    </a>
+                </div>
+              </div>
+          </div>
+        </div>
+    </body>
+    <script type="text/template" id="left_template">
+             <li class="clearfix" id="index{{index}}">
+                <div class="sign">
+                  <span class="mapLoad red" style="position:static;">
+                         <span class="text">{{index}}</span>
+                  </span>
+                </div>
+                <div class="info">
+                  <div>
+                     <span >地址：{{addr}}</span>
+                  </div>
+                  <p class="clearfix"><label>经度：</label><label class="content lon" title={{lon}}>{{lon}}</label></p>
+                  <p class="clearfix"><label>纬度：</label><label class="content lat" title={{lat}}>{{lat}}</label></p>
+                  {{each list as value }}
+                  <p class="content" title="{{value.value}}">{{value.key}}：{{value.value}}</p>
+                  {{/each}}
+                  {{if showPic}}
+                  <div class= "pic {{picAddr}}"></div>
+                  {{/if }}
+                </div>
+           </li>
+    </script>
+   <script type="text/javascript">
+ var inputArray=[];//存放联想数据
+ var TimeOutId;//存放潮湿id
+ var ajax;//存放ajax对象，用于取消请求
+ var ajaxCount=1;//控制第一次不取消ajax请求
+ var count=0;//控制瞬时组件
+ var temptCount=0;//控制标点序号
+ var map;//地图
+ var protocol;//协议
+ var markers;//标签
+ var lonArray=new Array();//地图显示经度范围
+ var latArray=new Array();//地图显示纬度范围
+ var leftShowCount=1;//控制收缩条默认是否收缩
+ var bounds;//地图显示最终的范围
+ var hasTGDID=false;//用来判断后台中是否传入TGDID，默认为没有
+ var  tgdLayer;//TGDID图层
+ String.prototype.trim=function(){
+  return this.replace(/(^\s*)|(\s*$)/g,"");
+ };
+   $('.think-input').oasThinkInput({
+       data:inputArray,
+       isBatch:false,    
+       paginInfo:{
+        current:1,
+        total:6,
+        pageItems:6
+      },
+       onChange:function(address){
+        var addr=address.trim();
+        clearTimeout(TimeOutId);
+        if(addr!=""){
+        TimeOutId=setTimeout(function(){
+          $('.think-input').oasThinkInput('showLoading');
+          getThinkInput(addr);
+        },1000);
+        }else{
+          inputArray=[];
+          $('.think-input').oasThinkInput('data',inputArray);
+        }
+       },
+       onSelect:function(lonLat){
+          addThinkMark(lonLat);
+       }
+   });
+   function addThinkMark(lonLat){
+    $(".left-bar ul").empty();
+    markers.clearMarkers();
+    $(".noData").addClass("disable");
+    var lon,lat,index=1,data;
+    lon=lonLat.x;
+    lat=lonLat.y;
+    data=lonLat.label;
+    var lonlat;
+       lonlat = new FHMap.LonLat(lon,lat);
+       var marker = new FHMap.Marker(
+       lonlat,
+       new FHMap.Icon(
+       "<span class=\"mapLoad red\" style=\"position:static;\">"+
+       "<span class=\"text\" id=\""+index+"\">"+index+"</span>"+
+       "</span>",{x:-6,y:-6})
+       );
+       marker.events.register('mouseover',marker,(function(index){return function(e){
+         var id="#index"+index;
+         $(id).addClass("selected");
+         $(id).find(".info div span").addClass("word-blue");
+         $(id).find(".sign span").removeClass("red").addClass("blue");
+         var range=".mapLoad span#"+index;
+         $(range).parent().removeClass("red").addClass("blue");
+         }
+       })(index)); 
+       marker.events.register('mouseout',marker,(function(index){return function(){
+         var id="#index"+index;
+         $(id).removeClass("selected");
+         $(id).find(".info div span").removeClass("word-blue");
+         $(id).find(".sign span").removeClass("blue").addClass("red");
+         var range=".mapLoad span#"+index;
+         $(range).parent().removeClass("blue").addClass("red");
+         }
+       })(index)); 
+       marker.events.register('click',marker,(function(index,lonlat){return function(){
+         var id="#index"+index;
+         $("#left-bar").animate({scrollTop: $(id).attr("offsetTop")-40}, 1000);
+       }})(index,lonlat));
+       markers.addMarker(marker);
+       map.zoomTo(17);
+       map.setCenter(lonlat);
+       bounds = new FHMap.Bounds(lon,lat,lon,lat);
+       addList(index,data,lon,lat);
+       firstChangeLeft();
+   }
+   function getThinkInput(addresses){
+    var url="http://"+urlDate.data.IP+":"+urlDate.data.PORT+"/FHGis/geocoder/forward?from=0&size=6&address="+encodeURIComponent(addresses);
+    if(ajaxCount!=1){
+      ajax.abort();
+    }
+    ajaxCount++;
+    ajax=$.ajax({
+     url:url,
+     timeout:20000,
+     success:function(data){
+      var address = (JSON.parse(data)).list;
+      var temptArray=new Array();
+     
+      if(address){
+          for(var i=0;i<address.length;i++){
+           var obj=new Object();
+           obj.label=address[i].fullAddress;
+           obj.x=address[i].x;
+           obj.y=address[i].y;
+           obj.num="";
+           obj.value="";
+           temptArray.push(obj);
+          }
+          $('.think-input').oasThinkInput('hideLoading');
+          $('.think-input').oasThinkInput('data',temptArray,temptArray.length);
+     }
+   },
+     error:function(XMLHttpRequest, textStatus, errorThrown){
+         inputArray=[];
+     }
+    });
+   }
+   /**
+     * @param {Function} 接收半遮页信息，根据不同的参数来进行不同的处理。
+     * @param {String} [lonLat] 经纬度或者TGDID内容。
+     * @param {String} [address] 地址信息。
+     * @param {String} [stationIds] 基站id。
+     */
+      function innerFunction(tempt){ 
+      var options = $.extend(true,{}, tempt);
+       $('#checkSearch').validate({
+               "rules": {
+                   "lonLat": {
+                       "lonLatFormat":true
+                   }
+               }
+           });
+       //判断是否有TGDID，如果有则hasTGDID为true
+         if(options.showGrid){
+            hasTGDID=options.showGrid;
+         }
+        if(options.type=="TGDID"){
+            $(".search").hide();
+            $("#map").height($(window).height()-1);
+            $("#left-bar").height($(window).height()-1);
+            inits("",""); 
+            inverse(options);
+        }else if(options.type=="lonLat"){
+           $(".search").hide();
+           $("#map").height($(window).height()-1);
+           $("#left-bar").height($(window).height()-1);
+           inits("","");
+           inverse(options);
+        }else if(options.type=="address"){
+           $(".search").hide();
+           $("#map").height($(window).height()-1);
+           $("#left-bar").height($(window).height()-1);
+           inits("","");
+           forwards(options);
+        }else if(options.type=="station"){
+           $(".search").hide();
+           $("#map").height($(window).height()-1);
+           $("#left-bar").height($(window).height()-1);
+           initStation(options);
+        }else if(options.type=="search"){
+          var x=centerData.substring(0,centerData.indexOf(","));
+          var y=centerData.substring(centerData.indexOf(",")+1,centerData.length);
+          inits(x,y);
+          var lonlat = new FHMap.LonLat(x,y);
+          map.setCenter(lonlat);
+        }else{
+          errorDispose('类型有误');
+        }
+ }
+    $('.bubbleAddr').oasBubble({                 //气泡头部内容，设为NULL，气泡没有头部
+        target:".tip",         // 指定点击页面的元素打开气泡
+        trigger:"hover",                         //展现方法，有click和hover两种方式
+        delay: 350,                             //显隐延迟，只有hover下有用
+        width:180,
+        height:25,
+        offset:[-8,5]                  //[left,top]气泡位置偏移
+    });
+     $("select").oasSelect({
+       width:100,
+       onChange:function(){
+       var type=document.getElementById("type");
+       if(type.options[type.selectedIndex].value=="经纬度"){
+         $('.bubbleAddr').oasBubble("message","支持模糊搜索！");
+         $('.bubbleAddr').oasBubble("height",25);
+         $('.address-input').removeClass("disable");
+         $('.lonlat-input').addClass("disable");
+       }else{
+         $('.bubbleAddr').oasBubble("message","经度范围：73.55-135.084<br>纬度范围：3.85-53.55<br>经纬度中间以空格相隔，多个以','相隔， 例如：<br> 108.21 30.36,101.2 24.36");
+         $('.bubbleAddr').oasBubble("height",110);
+         $('.address-input').addClass("disable");
+         $('.lonlat-input').removeClass("disable");
+       }
+     }
+ });
+$.validator.addMethod("lonLatFormat",function(value,element){
+       var data=new Array();
+       data[0]=value.trim();
+       data=value.trim().split(/[,，，]/);
+       var resultArray=new Array();
+       for(var i=0;i<data.length;i++){
+         resultArray[i]=false;
+         var datas= data[i].trim().split(/\s+/);
+         var lon=Number(datas[0]);
+         var lat=Number(datas[1]);
+         if(lon>=73.55&&lon<=135.084&&lat<=53.55&&lat>=3.85&&datas.length==2){
+           resultArray[i]=true;
+         }
+       }
+       var result=resultArray.every(function(item,index,array){
+         return item==true;
+       });
+       return this.optional(element)||result;
+      },"格式错误，中国经度范围：73.55-135.084，纬度范围：3.85-53.55，多个经纬度格式： 经度 纬度,经度 纬度");
+function  errorDispose(errorType){
+  $(".search").hide();
+  $("#map-wrap").hide();
+  $(".oas-all-page.clearfix").show();
+  $(".loadingError .content").text(errorType);
+};
+/**
+  * @param {Function} TGDID格式转换并验证数据合法性。
+  * @param {String} [options] 后台传入相关信息。
+  */
+function transform(options){
+    if(options.type=="TGDID"){
+      for(var i=0;i<options.data.length;i++){
+        var result=inverseTGDID(options.data[i].id);
+        options.data[i].lon=result.lon;
+        options.data[i].lat=result.lat;
+      }
+    }
+    for(var i=0;i<options.data.length;i++){
+    var lon=options.data[i].lon;
+    var lat=options.data[i].lat;
+    if((lon<73.55||lon>135.083||lat<3.85||lat>53.55)&&lon!=""&&lat!=""){
+        $(".oas-local-loading").addClass("disable");
+        errorDispose('传入数据超出经纬度范围');
+        options.data.length=0;
+        return options;
+    }
+  }
+  return options;
+}
+/**
+  * @param {Function} 前台输入经纬度格式转换。
+  * @param {String} [lonLat] 前台输入经纬度信息。
+  */
+function lonLatTransform(lonLat){
+  var options={
+    type:"lonLat"
+  };
+  var lonLatArray=new Array();
+  var data=new Array();
+  var lonLat=lonLat.toString().trim();
+  data[0]=lonLat;
+  data=lonLat.trim().split(/[,，，]/);
+  for(var i=0;i<data.length;i++){
+      var temtp= data[i].trim().split(/\s+/);
+      var lonlatObject=new Object();
+      lonlatObject.lon=Number(temtp[0]);
+      lonlatObject.lat=Number(temtp[1]);
+      lonLatArray[i]=lonlatObject;
+  }
+  options.data=lonLatArray;
+  return options;
+}
+/**
+  * @param {Function} 后台输入TGDID格式转换。
+  * @param {String} [x] TGDID。
+  */
+function inverseTGDID(x){
+  var signX=parseInt(x/100000000000);
+  var temptX=(parseInt((x%100000000000)/1000000))/100;
+  var signY=parseInt((x%1000000)/100000);
+  var temptY=(x%100000)/100;
+  var psoitionX;
+  var psoitionY;
+  if(signX==1){
+    psoitionX=temptX;
+  }else{
+    psoitionX=0-temptX;
+  }
+  if(signY==1){
+    psoitionY=temptY;
+  }else{
+    psoitionY=0-temptY;
+  }
+  var lonlatObject=new Object();
+  lonlatObject.lon=psoitionX;
+  lonlatObject.lat=psoitionY;
+  return lonlatObject;
+}
+/**
+  * @param {Function} 初始化基站地图组件，之后将标点显示在页面中。
+  * @param {String} [options] 基站信息。
+  */
+function initStation(options){
+    map = new FHMap.Map('map',{zoom:5});
+    OasMsg.open({type:'loading',time:0,message:'努力加载中',modal:true});
+    baseStation = new FHMap.Layer.WMS.POI("basestation");     
+    map.addLayer(baseStation);
+    markers = new FHMap.Layer.Markers("Markers");
+    map.addLayer(markers);
+    markers.clearMarkers();
+    protocol = new FHMap.Protocol.WFS(baseStation, {
+    callback: function(features){
+    var lonlat;
+    if(features && features.length > 0){
+        $(".noData").addClass("disable");
+        for(var i=0;i<features.length;i++){
+          var index=i+1;
+          lonlat = new FHMap.LonLat(features[i].geometry.x,features[i].geometry.y);
+          var marker = new FHMap.Marker(
+          lonlat,
+          new FHMap.Icon(
+          "<span class=\"mapLoad red\" style=\"position:static;\">"+
+          "<span class=\"text\" id=\""+index+"\">"+index+"</span>"+
+          "</span>",{x:-6,y:-6})
+          );
+          marker.events.register('mouseover',marker,(function(index){return function(e){
+            var id="#index"+index;
+            $(id).addClass("selected");
+            $(id).find(".info div span").addClass("word-blue");
+            $(id).find(".sign span").removeClass("red").addClass("blue");
+            var range=".mapLoad span#"+index;
+            $(range).parent().removeClass("red").addClass("blue");
+            }
+          })(index)); 
+          marker.events.register('mouseout',marker,(function(index){return function(){
+            var id="#index"+index;
+            $(id).removeClass("selected");
+            $(id).find(".info div span").removeClass("word-blue");
+            $(id).find(".sign span").removeClass("blue").addClass("red");
+            var range=".mapLoad span#"+index;
+            $(range).parent().removeClass("blue").addClass("red");
+            }
+          })(index)); 
+          marker.events.register('dblclick',marker,(function(index,lonlat){return function(){
+            if(map.zoom=="17"){
+              map.zoomToBounds(bounds);
+            }else{
+              map.zoomTo(17);
+              map.setCenter(lonlat);
+            }
+          }})(index,lonlat)); 
+          marker.events.register('click',marker,(function(index,lonlat){return function(){
+            var id="#index"+index;
+            $("#left-bar").animate({scrollTop: $(id).attr("offsetTop")-40}, 1000);
+          }})(index,lonlat));
+          markers.addMarker(marker);
+          var picAddr;
+          if(features[i].data.ispCode==01){
+            picAddr="telecom";
+          }
+          if(features[i].data.ispCode==03){
+            picAddr="unicom";
+          }
+          if(features[i].data.ispCode==06){
+            picAddr="mobilecom";
+          }
+          var offsetTop=$("#index");
+          var addList;
+          for(var j=0;j<options.data.length;j++){
+            if(options.data[j].id==features[i].fid){
+              addList=options.data[j].list;
+            }
+      
+          }
+          var datas={
+            index:index,
+            addr:features[i].data.position,
+            lon:features[i].geometry.x,
+            lat:features[i].geometry.y,
+            picAddr:picAddr,
+            showPic:true,
+            list:addList
+          };
+          var html=template("left_template",datas);
+          $(".left-bar ul").append(html);
+          $("#index"+index).attr("offsetTop",$("#index"+index).offset().top); 
+          lonArray.push(features[i].geometry.x);
+          latArray.push(features[i].geometry.y);
+          if(i==(features.length-1)){
+             lonArray.sort(function compare(value1,value2){
+              return value1-value2;
+             });
+             latArray.sort(function compare(value1,value2){
+              return value1-value2;
+             });
+             bounds = new FHMap.Bounds(lonArray[0],latArray[0],lonArray[lonArray.length-1],latArray[latArray.length-1]);
+             map.zoomToBounds(bounds);
+             lonArray.length=0;
+             latArray.length=0;
+             OasMsg.close();
+             firstChangeLeft();
+          }
+       }
+
+    }else if(features.length == 0){
+      OasMsg.close();
+      OasMsg.open({type:'warning',message:'经纬度获取失败，无法定位',modal:false});
+    }
+      }
+    });
+    var stationIds=new Array();
+    for(var i=0;i<options.data.length;i++){
+      stationIds.push(options.data[i].id);
+    }
+    protocol.featureId(stationIds);
+  }
+/**
+  * @param {Function} 初始化地图组件。
+  * @param {String} [x] 地图中心经度。
+  * @param {String} [y] 地图中心纬度。
+  */
+function inits(x,y){
+      map = new FHMap.Map('map',{zoom:5});
+      map.events.on({
+      click: function(){
+           $("#changeClick").click();
+            }
+        })
+      if(hasTGDID){
+        tgdLayer=new FHMap.Layer.TgdLayer("TGD",{});
+        map.addLayer(tgdLayer);
+        tgdLayer.displayToolbar(false);
+        markers = new FHMap.Layer.Markers("Markers",{
+          callbacks:{
+            click: function(bean){
+            }
+          }
+        });
+        map.addLayer(markers);
+      }else{
+        markers = new FHMap.Layer.Markers("Markers",{
+          callbacks:{
+            click: function(bean){
+            }
+          }
+        });
+        map.addLayer(markers);
+      }  
+}
+/**
+  * @param {Function} 在地图上做标记。
+  * @param {数组} [address] 标记的内容。
+  * @param {数组} [addData] 后台传入显示内容。
+  */
+function addMarkers(addData,address){
+     var lonlat;
+    if(address && address.length > 0){
+        $(".noData").addClass("disable");
+        for(var i=0;i<address.length;i++){
+        lonlat = new FHMap.LonLat(address[i].x,address[i].y);
+        var index=temptCount-count+1;
+        var marker = new FHMap.Marker(
+        lonlat,
+        new FHMap.Icon(
+        "<span class=\"mapLoad red\" style=\"position:static;\">"+
+        "<span class=\"text\" id=\""+index+"\">"+index+"</span>"+
+        "</span>",{x:-6,y:-6})
+        );
+        var data=address[i];
+        marker.events.register('mouseover',marker,(function(index){return function(e){
+          var id="#index"+index;
+          $(id).addClass("selected");
+          $(id).find(".info div span").addClass("word-blue");
+          $(id).find(".sign span").removeClass("red").addClass("blue");
+          var range=".mapLoad span#"+index;
+          $(range).parent().removeClass("red").addClass("blue");
+          }
+        })(index)); 
+        marker.events.register('mouseout',marker,(function(index){return function(){
+          var id="#index"+index;
+          $(id).removeClass("selected");
+          $(id).find(".info div span").removeClass("word-blue");
+          $(id).find(".sign span").removeClass("blue").addClass("red");
+          var range=".mapLoad span#"+index;
+          $(range).parent().removeClass("blue").addClass("red");
+          }
+        })(index)); 
+        marker.events.register('dblclick',marker,(function(index,lonlat){return function(){
+          if(map.zoom=="17"){
+            map.zoomToBounds(bounds);
+          }else{
+            map.zoomTo(17);
+            map.setCenter(lonlat);
+          }
+        }})(index,lonlat));
+        marker.events.register('click',marker,(function(index,lonlat){return function(){
+          var id="#index"+index;
+          $("#left-bar").animate({scrollTop: $(id).attr("offsetTop")-40}, 1000);
+        }})(index,lonlat));  
+        markers.addMarker(marker);
+        addList(index,data.fullAddress,data.x,data.y,addData);
+        count--;
+        lonArray.push(data.x);
+        latArray.push(data.y);
+       }
+        firstChangeLeft();
+    }
+    if(count==0){
+       lonArray.sort(function compare(value1,value2){
+        return value1-value2;
+       });
+       latArray.sort(function compare(value1,value2){
+        return value1-value2;
+       });  
+       bounds = new FHMap.Bounds(lonArray[0],latArray[0],lonArray[lonArray.length-1],latArray[latArray.length-1]);
+       map.zoomToBounds(bounds);
+       lonArray.length=0;
+       latArray.length=0;
+       OasMsg.close();
+    }
+}
+function firstChangeLeft(){
+  if(leftShowCount==1){
+   var bar=$("#oasicon-arrow");
+   moveElement("#left-bar","#map-wrap","#flexible-bar",-298,0,0,0,10);
+   bar.attr("class","oasicon oasicon-arrow-left");
+   setTimeout(function(){
+           $(".bottom-fix").slideDown(1000);
+   },1000);
+   setTimeout(function(){
+           $(".bottom-fix").slideUp(1000);
+   },5000);
+  }
+  leftShowCount++;
+}
+/**
+  * @param {Function} 地址转化。
+  * @param {String} [options] 地址内容。
+  */
+function forwards(options){
+  $(".left-bar ul").empty();
+  markers.clearMarkers();
+  OasMsg.open({type:'loading',time:0,message:'努力加载中',modal:true});
+  var geocoder = new FHMap.Protocol.Geocoder({async: true,callback: (function(addData){return function(data){
+     address = data.list;
+     if(address.length!=0){
+       $(".noData").addClass("disable");
+       count=address.length;
+       temptCount=count;
+       addMarkers(addData,address); 
+     }else{
+        count=0;
+        firstChangeLeft();
+        $(".noData").removeClass("disable");
+        $(".noData .content").text("暂无数据！");
+        OasMsg.close();
+     }
+  }})(options.data[0].list)});
+  var address = geocoder.forward(options.data[0].address,0,100,{});
+}
+/**
+  * @param {Function} 经纬度或TGD转化。
+  * @param {String} [options] 经纬度或TGD内容。
+  */
+function inverse(options){
+  $(".left-bar ul").empty();
+  markers.clearMarkers();
+  OasMsg.open({type:'loading',time:0,message:'努力加载中',modal:true});
+  options=transform(options);
+  count=options.data.length;
+  temptCount=count;
+  if(count==0){
+    OasMsg.close();
+  }
+  if(options.type!="TGDID"){
+    for(var i=0;i<options.data.length;i++){
+      var geocoder = new FHMap.Protocol.Geocoder({async: true, callback: (function(addData){return function(data){
+      var dateArray=[data];
+      dateArray[0].x=addData.lon;
+      dateArray[0].y=addData.lat;
+      dateArray[0].fullAddress=dateArray[0].fullAddress+"附近";
+      if(dateArray[0].fullAddress=="undefined附近"){
+        dateArray[0].fullAddress="未知";
+      }
+      addMarkers(addData.list,dateArray); 
+    }})(options.data[i])});
+      geocoder.inverse(options.data[i].lon,options.data[i].lat);
+    }
+  }else{
+      for(var i=0;i<options.data.length;i++){
+         /* 
+          //直接打标，数据从后台传入
+         var dateArray=new Array();
+          var X=(options.data[i].lon+0.0055).toFixed(4);
+          var Y=(options.data[i].lat+0.0055).toFixed(4);
+          var obj={x:X,y:Y,fullAddress:options.data[i].adrress};
+          dateArray.push(obj);
+          addMarkers(options.data[i].list,dateArray); 
+          */
+        var protocols= new FHMap.Protocol.WFS("poi", {callback: (function(addData){return function(data){
+        var dateArray=[data];
+        var TGD=new FHMap.Geometry.Tgd(addData.id);
+        var centerLonLat=TGD.getCenterLonLat();
+        var smallerTempt=new Object();
+        if(dateArray[0].length==0){
+          var obj=new Object();
+          obj={x:centerLonLat.lon,y:centerLonLat.lat,fullAddress:"未知"};
+          smallerTempt.smallerDistance=0;
+          smallerTempt.data=obj;
+        }else{
+          smallerTempt.smallerDistance=100;
+          smallerTempt.data="";
+          for(var i=0;i<(dateArray[0]).length;i++){
+            var distance=((dateArray[0])[i].attributes.x-centerLonLat.lon)*((dateArray[0])[i].attributes.x-centerLonLat.lon)+((dateArray[0])[i].attributes.y-centerLonLat.lat)*((dateArray[0])[i].attributes.y-centerLonLat.lat);
+            if(distance<smallerTempt.smallerDistance){
+              smallerTempt.smallerDistance=distance;
+              smallerTempt.data=(dateArray[0])[i].attributes;
+            }
+          }
+        }
+        addMarkers(addData.list,[smallerTempt.data]); 
+        }})(options.data[i])});
+        protocols.geometry('within',new FHMap.Geometry.Tgd(options.data[i].id));       
+      }
+}
+}
+
+/**
+  * @param {Function} 左侧增加列表。
+  * @param {String} [index] 列表序号。
+  * @param {String} [addr] 地址。
+  * @param {Number} [lon] 经度。
+  * @param {Number} [lat] 纬度。
+  * @param {数组} [addData] 后台增加的显示内容。
+  */
+function addList(index,addr,lon,lat,addData){
+  var addDataHtml="";
+  var data={
+    index:index,
+    addr:addr,
+    lon:lon,
+    lat:lat,
+    list:addData
+  };
+   var offsetTop=$("#index");
+   var html=template("left_template",data);
+   $(".left-bar ul").append(html);
+   $("#index"+index).attr("offsetTop",$("#index"+index).offset().top); 
+}
+function search(){
+    var lonLat=($("#lon-lat").val()).trim();
+    var addresses=($("#address").val()).trim();
+    var type=document.getElementById("type");
+      if(type.options[type.selectedIndex].value=="地区名称"){ 
+        if(addresses!=""){
+            var options={
+                data:[
+                  {
+                    address:addresses
+                  }
+                ],
+                type:"address"
+            };
+            forwards(options);
+        }
+      }
+      if(type.options[type.selectedIndex].value=="经纬度"){
+        if(lonLat!=""){
+          if($("#checkSearch").valid()){
+            var options=lonLatTransform(lonLat);
+            inverse(options);
+          }else{
+             $(".left-bar ul").empty();
+             markers.clearMarkers();
+             $(".noData").removeClass("disable");
+             $(".noData .content").text("输入不合法！");
+          }
+        }
+      }
+}
+  // 增加收缩条开始 
+$("#background").click(function(){
+   var bar=$("#oasicon-arrow");
+   var type=bar.attr("class");
+   if (type=="oasicon oasicon-arrow-left") {
+        moveElement("#left-bar","#map-wrap","#flexible-bar",0,-298,298,298,10);
+        bar.attr("class","oasicon oasicon-arrow-right");
+   }else{
+        moveElement("#left-bar","#map-wrap","#flexible-bar",-298,0,0,0,10);
+        bar.attr("class","oasicon oasicon-arrow-left");
+   }
+});
+/**
+  * @param {Function} 收缩条。
+  * @param {String} [left_bar] 被压缩部分ID。
+  * @param {String} [right] 被扩展部分的ID。
+  * @param {String} [bar] 压缩条ID。
+  * @param {Number} [begin_left] 被压缩部分起始left值。
+  * @param {Number} [end_left] 被压缩部分结束的left值。
+  * @param {Number} [padding_left] 被扩展部分的padding起始值。
+  * @param {Number} [bar_left] 压缩条left的起始值。
+  * @param {Number} [interval] 收缩速度（单位毫秒）。
+  */
+function moveElement(left_bar,right,bar,begin_left,end_left,padding_left,bar_left,interval){
+  var elem_left=$(left_bar);
+  var elem_right=$(right);
+  var elem_bar=$(bar);
+  if(elem_left.movement){
+    clearTimeout(elem_left.movement);
+  }
+  var dist=0;
+  if (begin_left==end_left) {
+    map.updateSize();
+    if(map.zoom!="17"){
+      if(bounds){
+       map.zoomToBounds(bounds);
+      }
+    }
+    return true;
+  }
+  if (end_left<begin_left) {
+    dist=Math.ceil((begin_left-end_left)/10);
+    begin_left=begin_left-dist;
+    padding_left=padding_left-dist;
+    bar_left=bar_left-dist;
+  }
+  if (end_left>begin_left) {
+    dist=Math.ceil((end_left-begin_left)/10);
+    begin_left=begin_left+dist;
+    padding_left=padding_left+dist;
+    bar_left=bar_left+dist;
+  }
+  elem_left.css({"left":begin_left});
+  elem_right.css({"padding-left":padding_left});
+  elem_bar.css({"left":bar_left});
+  $("#map").width(elem_right.width());
+  $(".bottom-fix").width(elem_right.width());
+  var repeat="moveElement('"+left_bar+"','"+right+"','"+bar+"',"+begin_left+","+end_left+","+padding_left+","+bar_left+","+interval+")";
+  elem_left.movement=setTimeout(repeat,interval);
+}
+$('.search').on("keypress","#address", function(evt){
+  var evt=evt||window.event;
+   var addresses=($("#address").val()).trim();
+   if(evt.keyCode==13){
+    if(addresses!=""){
+      var options={
+          data:[
+            {
+              address:addresses
+            }
+          ],
+          type:"address"
+      };
+      $("#changeClick").click();//控制回车后联想输入内容隐藏
+      forwards(options);
+    }
+   }
+});
+$('.search').on("keypress","#lon-lat", function(evt){
+  var evt=evt||window.event;
+  var lonLat=($("#lon-lat").val()).trim();
+   if(evt.keyCode==13){
+    if(lonLat!=""){
+      if($("#checkSearch").valid()){
+        var options=lonLatTransform(lonLat);
+        inverse(options);
+      }else{
+         $(".left-bar ul").empty();
+         markers.clearMarkers();
+         $(".noData").removeClass("disable");
+         $(".noData .content").text("输入不合法！");
+      }
+    }
+   }
+});
+$(".left-bar").on("click","li",function(){
+  var lonlat = new FHMap.LonLat($(this).find(".lon").text(),$(this).find(".lat").text());
+  map.setCenter(lonlat);
+});
+
+$(".left-bar ").on("mouseover mouseout","li",function(event){
+ if(event.type == "mouseover"){
+    $(this).addClass("selected");
+    $(this).find(".info div span").addClass("word-blue");
+    $(this).find(".sign span").removeClass("red").addClass("blue");
+    var index=$(this).find(".mapLoad span").text();
+    var marker=markers.getMarker(new FHMap.LonLat($(this).find(".info .lon").text(),$(this).find(".info .lat").text()));
+     if(marker){
+          marker.setIcon(new FHMap.Icon(
+          "<span class=\"mapLoad blue\" style=\"position:static;\">"+
+          "<span class=\"text\" id=\""+index+"\">"+index+"</span>"+
+          "</span>",{x:-6,y:-6})
+          );
+      }
+ }else if(event.type == "mouseout"){
+    $(this).removeClass("selected");
+    $(this).find(".info div span").removeClass("word-blue");
+    $(this).find(".sign span").removeClass("blue").addClass("red");
+    var index=$(this).find(".mapLoad span").text();
+   var marker=markers.getMarker(new FHMap.LonLat($(this).find(".info .lon").text(),$(this).find(".info .lat").text()));
+     if(marker){
+        marker.setIcon(new FHMap.Icon(
+          "<span class=\"mapLoad red\" style=\"position:static;\">"+
+          "<span class=\"text\" id=\""+index+"\">"+index+"</span>"+
+          "</span>",{x:-6,y:-6})
+          );
+      }
+ }
+});
+$("#map").height($(window).height()-40);
+$("#left-bar").height($(window).height()-40);
+$(window).resize(function(){
+if($(".search").css("display")=="none"){
+  $("#map").height($(window).height()-1);
+  $("#left-bar").height($(window).height()-1);
+}else{
+  $("#map").height($(window).height()-40);
+  $("#left-bar").height($(window).height()-40);
+}
+});
+   </script>
+</html>

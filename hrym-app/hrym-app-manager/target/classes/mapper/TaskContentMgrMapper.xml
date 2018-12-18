@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.manager.dao.TaskContentMgrMapper">
+
+    <!--为TaskContentMapper的接口方法提供sql语句配置 -->
+    <select id="findAllTaskContent" resultType="com.hrym.appcommon.model.task.TaskContent">
+        SELECT
+        c.item_content_id,c.version_name,c.video_file,c.version,c.content_version,c.source,c.author,c.origin,i.item_id
+        "taskItem.itemId",i.item_name "taskItem.itemName",i.alias_name "taskItem.aliasName",i.item_intro
+        "taskItem.itemIntro",t.type_name "taskType.typeName"
+        FROM
+        t_resource_content c
+        LEFT JOIN t_resource_item i ON c.item_id=i.item_id
+        LEFT JOIN t_work_item w ON w.item_id=i.item_id
+        LEFT JOIN t_task_type t ON w.type_id=t.type_id
+    </select>
+
+    <select id="levelFindTaskContent" resultType="com.hrym.appcommon.model.task.TaskContent">
+        SELECT c.item_content_id,c.video_file,c.version,
+        c.version_name,c.content_version,c.source,c.author,c.origin,i.item_name "taskItem.itemName",i.item_id
+        "taskItem.itemId",i.alias_name "taskItem.aliasName",i.item_intro "taskItem.itemIntro",t.type_name
+        "taskType.typeName"
+        FROM
+        t_task_content c LEFT JOIN t_task_item i ON c.item_id=i.item_id
+        LEFT JOIN t_task_type t ON i.task_type=t.type_id WHERE t.level=#{level}
+    </select>
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+</mapper>

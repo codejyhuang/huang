@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.ItemCustomMapper">
+    <resultMap id="baseResultMap" type="com.hrym.wechat.entity.ItemCustom">
+        <id column="custom_id" property="itemId"/>
+        <result column="user_id" property="userId"/>
+        <result column="intro" property="intro"/>
+        <result column="custom_name" property="customName"/>
+        <result column="unit" property="unit"/>
+    </resultMap>
+
+    <insert id="buildCustom" useGeneratedKeys="true" keyProperty="itemId" keyColumn="custom_id">
+        insert into t_resource_item_custom (custom_name, user_id, create_time,unit,intro,info)
+        values(#{customName},#{userId},#{createTime},#{unit},#{intro},#{info})
+    </insert>
+
+    <select id="listAllByUuid" resultMap="baseResultMap">
+        select custom_id,custom_name,user_id,unit,intro from t_resource_item_custom where user_id like #{uuid}
+    </select>
+
+    <select id="findTaskPlanCustomById" resultType="com.hrym.wechat.entity.ItemCustom">
+         select task_id,custom_id,uuid,plan_target_value,plan_target,done_num,today_commit_num,counting_method,
+          auto_done_num,custom_done_num,is_exit,create_time,update_time,day_target,target_time,compete_time from t_task_plan_custom where
+          uuid = #{uuid} and custom_id = #{itemId}
+    </select>
+
+    <select id="selectUnitByItemId" resultType="java.lang.String">
+        select unit from t_resource_item_custom where custom_id like #{itemId}
+    </select>
+    <select id="queryCountByCustomName" resultType="java.lang.Integer">
+        select count(custom_id) from t_resource_item_custom where custom_name = #{lessonName} and user_id = #{userId}
+    </select>
+
+
+</mapper>

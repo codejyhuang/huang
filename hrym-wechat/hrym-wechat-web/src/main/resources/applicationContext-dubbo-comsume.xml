@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd ">
+
+    <dubbo:application name="hrym-wechat-service"/>
+
+    <dubbo:registry address="zookeeper://${zk.conf}"/>
+
+    <!--<dubbo:protocol name="dubbo" port="20884"/>-->
+    <!--<dubbo:protocol name="hessian" port="20887"/>-->
+    <dubbo:reference id="wechatUsersService" interface="com.hrym.wechat.smallProgram.WechatUsersService"/>
+
+    <dubbo:reference id="countRecordService" interface="com.hrym.wechat.smallProgram.CountRecordService"/>
+
+    <dubbo:reference id="meditationRecordService" interface="com.hrym.wechat.smallProgram.MeditationRecordService"/>
+
+    <dubbo:reference id="meditationTaskService" interface="com.hrym.wechat.smallProgram.MeditationTaskService"/>
+
+    <dubbo:reference id="meditationService" interface="com.hrym.wechat.smallProgram.MeditationService"/>
+
+    <dubbo:reference id="aesService" interface="com.hrym.wechat.smallProgram.AesService"/>
+
+    <dubbo:reference id="meditationTypeService" interface="com.hrym.wechat.smallProgram.MeditationTypeService"/>
+
+    <dubbo:reference id="floclService" interface="com.hrym.wechat.service.IFlockService"/>
+
+    <dubbo:reference id="itemLessonService" interface="com.hrym.wechat.service.IItemLessonService"/>
+
+    <dubbo:reference id="itemCustomService" interface="com.hrym.wechat.service.IItemCustomService"/>
+
+    <dubbo:reference id="itemUserUnitService" interface="com.hrym.wechat.service.IItemUserUnitService"/>
+
+    <dubbo:reference id="flockCountReportService" interface="com.hrym.wechat.service.IFlockCountReportService"/>
+
+    <dubbo:reference id="flockUserService" interface="com.hrym.wechat.service.IFlockUserService"/>
+
+    <dubbo:reference id="flockUserBackService" interface="com.hrym.wechat.service.IFlockUserBackService"/>
+
+
+</beans>

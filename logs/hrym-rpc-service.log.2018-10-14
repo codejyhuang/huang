@@ -1,0 +1,56 @@
+2018-10-14 06:26:07 [ INFO ] [ ClientCnxn$SendThread.java :1032(logStartConnect)]  Opening socket connection to server 192.168.1.210/192.168.1.210:2181. Will not attempt to authenticate using SASL (unknown error)
+2018-10-14 08:04:43 [ WARN ] [ ClientCnxn$SendThread.java :1162(run)]  Session 0x10000027f390548 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Operation timed out
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2018-10-14 08:04:45 [ INFO ] [ ClientCnxn$SendThread.java :1032(logStartConnect)]  Opening socket connection to server 192.168.1.210/192.168.1.210:2181. Will not attempt to authenticate using SASL (unknown error)
+2018-10-14 08:04:45 [ ERROR ] [ ClientCnxnSocketNIO.java :289(connect)]  Unable to open socket to 192.168.1.210/192.168.1.210:2181
+2018-10-14 08:04:45 [ WARN ] [ ClientCnxn$SendThread.java :1162(run)]  Session 0x10000027f390548 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.SocketException: Network is unreachable
+	at sun.nio.ch.Net.connect0(Native Method)
+	at sun.nio.ch.Net.connect(Net.java:454)
+	at sun.nio.ch.Net.connect(Net.java:446)
+	at sun.nio.ch.SocketChannelImpl.connect(SocketChannelImpl.java:648)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.registerAndConnect(ClientCnxnSocketNIO.java:277)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.connect(ClientCnxnSocketNIO.java:287)
+	at org.apache.zookeeper.ClientCnxn$SendThread.startConnect(ClientCnxn.java:1024)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1060)
+2018-10-14 08:04:46 [ INFO ] [ ClientCnxn$SendThread.java :1032(logStartConnect)]  Opening socket connection to server 192.168.1.210/192.168.1.210:2181. Will not attempt to authenticate using SASL (unknown error)
+2018-10-14 08:04:46 [ ERROR ] [ ClientCnxnSocketNIO.java :289(connect)]  Unable to open socket to 192.168.1.210/192.168.1.210:2181
+2018-10-14 08:04:46 [ WARN ] [ ClientCnxn$SendThread.java :1162(run)]  Session 0x10000027f390548 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.SocketException: Network is unreachable
+	at sun.nio.ch.Net.connect0(Native Method)
+	at sun.nio.ch.Net.connect(Net.java:454)
+	at sun.nio.ch.Net.connect(Net.java:446)
+	at sun.nio.ch.SocketChannelImpl.connect(SocketChannelImpl.java:648)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.registerAndConnect(ClientCnxnSocketNIO.java:277)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.connect(ClientCnxnSocketNIO.java:287)
+	at org.apache.zookeeper.ClientCnxn$SendThread.startConnect(ClientCnxn.java:1024)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1060)
+2018-10-14 08:04:47 [ INFO ] [ ClientCnxn$SendThread.java :1032(logStartConnect)]  Opening socket connection to server 192.168.1.210/192.168.1.210:2181. Will not attempt to authenticate using SASL (unknown error)
+2018-10-14 08:04:47 [ ERROR ] [ ClientCnxnSocketNIO.java :289(connect)]  Unable to open socket to 192.168.1.210/192.168.1.210:2181
+2018-10-14 08:04:47 [ WARN ] [ ClientCnxn$SendThread.java :1162(run)]  Session 0x10000027f390548 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.SocketException: Network is unreachable
+	at sun.nio.ch.Net.connect0(Native Method)
+	at sun.nio.ch.Net.connect(Net.java:454)
+	at sun.nio.ch.Net.connect(Net.java:446)
+	at sun.nio.ch.SocketChannelImpl.connect(SocketChannelImpl.java:648)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.registerAndConnect(ClientCnxnSocketNIO.java:277)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.connect(ClientCnxnSocketNIO.java:287)
+	at org.apache.zookeeper.ClientCnxn$SendThread.startConnect(ClientCnxn.java:1024)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1060)
+2018-10-14 08:04:49 [ INFO ] [ ClientCnxn$SendThread.java :1032(logStartConnect)]  Opening socket connection to server 192.168.1.210/192.168.1.210:2181. Will not attempt to authenticate using SASL (unknown error)
+2018-10-14 08:04:49 [ ERROR ] [ ClientCnxnSocketNIO.java :289(connect)]  Unable to open socket to 192.168.1.210/192.168.1.210:2181
+2018-10-14 08:04:49 [ WARN ] [ ClientCnxn$SendThread.java :1162(run)]  Session 0x10000027f390548 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.SocketException: Network is unreachable
+	at sun.nio.ch.Net.connect0(Native Method)
+	at sun.nio.ch.Net.connect(Net.java:454)
+	at sun.nio.ch.Net.connect(Net.java:446)
+	at sun.nio.ch.SocketChannelImpl.connect(SocketChannelImpl.java:648)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.registerAndConnect(ClientCnxnSocketNIO.java:277)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.connect(ClientCnxnSocketNIO.java:287)
+	at org.apache.zookeeper.ClientCnxn$SendThread.startConnect(ClientCnxn.java:1024)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1060)
+2018-10-14 08:35:47 [ INFO ] [ ClientCnxn$SendThread.java :1032(logStartConnect)]  Opening socket connection to server 192.168.1.210/192.168.1.210:2181. Will not attempt to authenticate using SASL (unknown error)

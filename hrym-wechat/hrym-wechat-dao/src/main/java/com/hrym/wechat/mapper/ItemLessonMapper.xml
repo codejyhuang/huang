@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.ItemLessonMapper">
+
+    <resultMap id="baseResultMap" type="com.hrym.wechat.entity.FlockLessonDO">
+        <result property="itemId" column="item_id"/>
+        <result property="itemContentId" column="item_content_id"/>
+        <result property="lessonName" column="lesson_name"/>
+        <result property="type" column="type"/>
+        <result property="uuid" column="user_id"/>
+        <result property="lessonAvatar" column="avatar"/>
+        <result property="nickName" column="nickname"/>
+        <result property="flockPeopleNum" column="online_num"/>
+    </resultMap>
+    <update id="updateOnlineNum">
+        update
+        <include refid="base_update"/>
+    </update>
+
+    <update id="updateitemListOrder">
+        UPDATE ${tableName} SET `order` = #{order} WHERE
+        <include refid="base_updateOrder"/>
+    </update>
+
+    <delete id="batchLogicRemoveFlockLesson">
+        update t_flock_item set state = #{state}
+        where flock_id = #{flockId} and `type` = #{type}
+        <include refid="base_delete"/>
+    </delete>
+
+    <select id="listAllByQo" resultType="com.hrym.wechat.entity.ItemLesson">
+        select item_id,item_content_id,version_name from t_resource_content_lesson
+        <include refid="base_where"/>
+    </select>
+
+    <select id="queryLessonFromView" resultMap="baseResultMap">
+        select v.item_id,v.item_content_id,v.lesson_name,v.type,v.online_num,v.user_id,u.avatar,u.nickname
+        from t_flock_lesson_view v
+        left join t_user_account u
+        on u.uuid = v.user_id
+        <include refid="base_where"/>
+
+    </select>
+    <select id="queryByItemIdAndContentIdAndUuidAndType" resultMap="baseResultMap">
+        select item_id,item_content_id,lesson_name,type,user_id from t_flock_lesson_view
+        <include refid="base_search"/>
+    </select>
+    <select id="queryLessonFromViewByItemIdAndItemContentIdAndType"
+            resultMap="baseResultMap">
+        select item_id,item_content_id,lesson_name,type,user_id,info from t_flock_lesson_view
+        <include refid="base_search"/>
+    </select>
+
+    <select id="findItenLessonName" resultType="com.hrym.wechat.entity.FlockItem">
+        SELECT version_name FROM ${tableLessonName} WHERE item_content_id =#{itemContentId} AND item_id =#{itemId}
+    </select>
+    <select id="queryCountByUuidFromView" resultType="java.lang.Integer">
+        select count(item_id) from t_flock_lesson_view where user_id = #{uuid}
+    </select>
+    <select id="queryItemViewUnit" resultType="com.hrym.wechat.entity.ItemUserUnit">
+        SELECT item_id,lesson_name,item_content_id,type,online_num,user_id,unit,intro FROM t_flock_lesson_view
+          WHERE item_id = #{itemId} AND item_content_id =#{itemContentId} AND type = #{type}
+    </select>
+    <select id="queryItemRecordList" resultType="com.hrym.wechat.entity.AppRecordCommon">
+        select fv.lesson_name,report_num,report_time from
+    t_record_common_view cv
+    left join t_flock_lesson_view fv
+    on cv.item_id = fv.item_id and cv.item_content_id = fv.item_content_id and cv.type = fv.type
+    where cv.user_id = #{uuid} and cv.task_id is NOT null
+    order by fv.lesson_name , cv.report_time
+    </select>
+
+
+    <sql id="base_where">
+        <where>
+            <if test="keywords!=null">
+                and lesson_name like CONCAT('%',#{keywords},'%')
+            </if>
+            <if test="type==2">
+                and v.type = 1 and v.user_id = #{uuid}
+            </if>
+            <if test="type==0">
+                and v.type in (0,2) order by v.online_num desc
+            </if>
+            <if test="type==1">
+                and (v.type in (0,2) or (v.type = 1 and v.user_id = #{uuid})) order by convert(v.lesson_name using gbk)
+            </if>
+        </where>
+    </sql>
+
+    <sql id="base_search">
+        <where>
+            <if test="type!=1">
+                and item_id = #{itemId} and item_content_id = #{itemContentId} and type = #{type}
+            </if>
+            <if test="type==1">
+                and item_id = #{itemId} and type = #{type}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="base_delete">
+        <if test="type==1">
+            and item_id = #{itemId}
+        </if>
+        <if test="type!=1">
+            and item_id =#{itemId} and item_content_id = #{itemContentId}
+        </if>
+    </sql>
+
+    <sql id="base_updateOrder">
+        <if test="type==1">
+            custom_id = #{itemId}  and uuid = #{uuid}
+        </if>
+        <if test="type==0">
+            item_id =#{itemId} AND  uuid =#{uuid} and item_content_id = #{itemContentId}
+        </if>
+        <if test="type==2">
+            item_id =#{itemId} AND  user_id =#{uuid}
+        </if>
+    </sql>
+
+    <sql id="base_update">
+        <if test="type==0">
+            t_resource_content_lesson set online_num = case when 0 > online_num  + #{num}  then 0 else online_num + #{num} end
+            where item_id = #{itemId} and item_content_id = #{itemContentId}
+        </if>
+        <if test="type==1">
+            t_resource_item_custom set online_num =  case when 0 > online_num  + #{num}  then 0 else online_num + #{num} end
+            where custom_id = #{itemId}
+        </if>
+        <if test="type==2">
+            t_resource_content_book set online_num =  case when 0 > online_num  + #{num}  then 0 else online_num + #{num} end
+            where item_id = #{itemId} and item_content_id = #{itemContentId}
+        </if>
+    </sql>
+</mapper>

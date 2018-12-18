@@ -1,0 +1,91 @@
+body {
+    font-size: 0.16rem;
+    /* position: relative; */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.wrap {
+    width: 100%;
+    overflow: hidden;
+}
+
+.content {
+    width: 100%;
+    height: 3.76rem;
+    margin-top: 1.456rem;
+    text-align: center;
+    position: relative;
+}
+.content .Invitation_name{
+    position: relative;
+    top:0.346rem;
+}
+.content .Invitation_name dl {
+    line-height: 0.25rem;
+    color: #444444;
+    font-size: 0.18rem;
+}
+
+.content .Invitation_name dl dt {
+    width: 100%;
+    height: 0.25rem;
+}
+
+.content .Invitation_name dl dd {
+    width: 100%;
+    height: 0.25rem;
+    margin-top: 0.2rem;
+    font-weight: bold;
+}
+
+.content .Invitation_content {
+    /* color: red; */
+    /* color: #333333; */
+    box-sizing: border-box;
+    width: 3.38rem;
+    height: 1.38rem;
+    border-radius: 0.05rem;
+    border: 1px solid #eeeeee;
+    margin-left: 0.186rem;
+    position: absolute;
+    top: 1.846rem;
+    padding: 0.38rem 0.186rem 0.2rem 0.186rem;
+    font-size: 0.14rem;
+    text-align: left;
+}
+
+.portrait_img {
+    position: absolute;
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    left: 50%;
+    margin-left: -0.24rem;
+    bottom: 1.676rem;
+    z-index: 999;
+}
+
+.footer {
+    position: absolute;
+    overflow: hidden;
+    bottom: 0.09rem;
+}
+
+.footer .jump {
+    display: block;
+    width: 3.51rem;
+    height: 0.48rem;
+    border-radius: 2px;
+    background: #594f60;
+    /* margin: 0 auto; */
+    font-size: 0.18rem;
+    line-height: 0.48rem;
+    margin-left: 0.12rem;
+    color: #fff;
+    text-align: center;
+}
+a{
+    text-decoration: none;
+}

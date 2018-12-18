@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.rpc.auth.dao.mapper.UserMapper">
+
+    <!--为dao接口方法提供sql语句配置 -->
+    <insert id="saveUserInfo">
+        INSERT
+        t_user_account(mobile,device_id,created_time,status,updated_time,social_uid,nickname,sex,source,avatar,recent_time)
+        VALUES
+        (#{mobile},#{deviceId},#{createdTime},#{status},#{updatedTime},#{socialUid},#{nickName},#{sex},#{source},#{avatar},#{recentTime})
+    </insert>
+
+    <select id="findUserInfoByMobile" resultType="com.hrym.rpc.app.dao.model.task.UserInfo">
+        SELECT
+        uuid,social_uid,name,nickname,mobile,email,password,sex,source,avatar,created_time,
+        updated_time,status,ymd,device_id
+        FROM
+        t_user_account
+        WHERE
+        mobile = #{mobile}
+    </select>
+
+    <!--获取用户信息-->
+    <select id="findUserInfoByToken" resultType="com.hrym.rpc.app.dao.model.task.UserInfo">
+        SELECT *
+        FROM
+        t_user_account a LEFT JOIN t_login b ON a.uuid = b.uuid
+        WHERE
+        b.token = #{token}
+    </select>
+
+
+    <update id="updateByToken">
+        UPDATE t_user_account
+        SET
+        <if test="u.nickName!=null">
+        nickname=#{u.nickName},
+        </if>
+        <if test="u.avatar!=null">
+        avatar=#{u.avatar},
+        </if>
+        <if test="u.email!=null">
+        email=#{u.email},
+        </if>
+        <if test="u.mobile!=null">
+        mobile=#{u.mobile},
+        </if>
+        <if test="u.sex!=null">
+        sex=#{u.sex},
+        </if>
+        <if test="u.ymd!=null">
+        ymd=#{u.ymd},
+        </if>
+        <if test="u.ymd!=null">
+        device_id=#{u.ymd},
+        </if>
+        <if test="u.profile!=null">
+        profile=#{u.profile},
+        </if>
+        <if test="u.updatedTime!=null">
+        updated_time=#{u.updatedTime},
+        </if>
+        <if test="u.status!=null">
+            status=#{u.status},
+        </if>
+        <if test="u.deviceId!=null">
+        device_id=#{u.deviceId},
+        </if>
+        <if test="u.recentTime!=null">
+            recent_time=#{u.recentTime},
+        </if>
+        uuid=uuid
+
+        WHERE
+        uuid in (SELECT uuid FROM t_login WHERE token=#{token})
+
+    </update>
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd
+          http://www.springframework.org/schema/task
+          http://www.springframework.org/schema/task/spring-task-4.1.xsd">
+
+    <!-- ApplicationContext -->
+    <bean id="springContextUtil" class="com.hrym.common.util.SpringContextUtil"></bean>
+
+    <!-- task任务注解扫描包（定时器开关） -->
+    <task:annotation-driven/> <!-- 用定时器注解 -->
+
+    <!-- 扫描位置是 -->
+    <context:annotation-config/>
+    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+    <context:component-scan base-package="com.hrym.wechat"/>
+
+
+
+    <!-- 使用Annotation自动注册Bean，解决事物失效问题：在主容器中不扫描@Controller注解，在SpringMvc中只扫描@Controller注解。  -->
+    <context:component-scan base-package="com.hrym">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+
+    <!--&lt;!&ndash; 加入需要执行的类 &ndash;&gt;-->
+    <!--<bean id="timingSchedule" class= "com.hrym.wechat.service.impl.FlockServiceImpl"/>-->
+    <!--&lt;!&ndash; 加入定时执行的方法 &ndash;&gt;-->
+    <!--<bean id="timingScheduleJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+        <!--&lt;!&ndash; 定时执行的类 &ndash;&gt;-->
+        <!--<property name="targetObject" ref="timingSchedule"/>-->
+        <!--&lt;!&ndash; 具体的方法 &ndash;&gt;-->
+        <!--<property name="targetMethod" value="test"/>-->
+    <!--</bean>-->
+    <!--&lt;!&ndash; 调度触发器，设置自己想要的时间规则 &ndash;&gt;-->
+    <!--<bean id="timingScheduleTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">-->
+        <!--&lt;!&ndash; 加入相关的执行类和方法 &ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="jobDetail" ref="timingScheduleJobDetail"/>&ndash;&gt;-->
+        <!--&lt;!&ndash; 设置时间规则 （为了方便测试，设置成一分钟一次。具体的规则见详情）&ndash;&gt;-->
+        <!--<property name="cronExpression" value="0/5 * * * * ?"/>-->
+    <!--</bean>-->
+    <!--&lt;!&ndash; 加入调度工厂 ,设置调度触发器即可&ndash;&gt;-->
+    <!--<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">-->
+        <!--<property name="triggers">-->
+            <!--<list>-->
+                <!--<ref bean="timingScheduleTrigger"/>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+
+</beans>

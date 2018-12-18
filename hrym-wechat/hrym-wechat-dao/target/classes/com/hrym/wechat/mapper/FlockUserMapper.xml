@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.FlockUserMapper">
+
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into t_flock_user(flock_id,uuid,type,`order`,create_time)
+        values(#{flockId},#{uuid},#{type},#{order},#{createTime})
+    </insert>
+    <update id="updateFlockUserOrder">
+        UPDATE t_flock_user SET `order` = #{order} WHERE flock_id =#{flockId} AND uuid = #{uuid}
+    </update>
+    <delete id="batchRemoveFlockUser">
+        delete from t_flock_user
+        where flock_id = #{flockId}
+        and uuid in
+        <foreach collection="userIds" open="(" separator="," close=")" item="userId">
+            #{userId}
+        </foreach>
+    </delete>
+    <select id="queryByFlockId" resultType="com.hrym.wechat.entity.FlockUser">
+        select f.id,flock_id,f.uuid,type,`order`,nickname,avatar
+        from t_flock_user f
+        left join t_user_account u
+        on u.uuid = f.uuid
+        where f.flock_id = #{id} and type = #{type}
+        <if test="keywords!=null">
+            and u.nickname like concat('%',#{keywords},'%')
+        </if>
+    </select>
+    <select id="selectAllByFlockId" resultType="com.hrym.wechat.entity.FlockUser">
+         select f.id,flock_id,f.uuid,type,`order`,nickname,avatar
+        from t_flock_user f
+        left join t_user_account u
+        on u.uuid = f.uuid
+        where f.flock_id = #{id}
+    </select>
+    <select id="queryCountByFlockId" resultType="java.lang.Integer">
+        select count(id) from t_flock_user where flock_id = #{flockId}
+    </select>
+    <select id="queryByFlockIdAndUuid" resultType="com.hrym.wechat.entity.FlockItem">
+        SELECT flock_id FROM t_flock_user WHERE flock_id = #{flockId} and uuid =#{uuid} LIMIT 1
+    </select>
+    <select id="queryCountByFlockIdAndUuid" resultType="com.hrym.wechat.entity.FlockUser">
+        select id,flock_id,uuid,type,`order`
+        from t_flock_user
+        where flock_id = #{flockId} and uuid = #{uuid}
+    </select>
+    <select id="queryUuidListByFlockId" resultType="java.lang.Integer">
+        select uuid from t_flock_user where flock_id = #{id}
+    </select>
+</mapper>

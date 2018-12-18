@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.TaskCommonMapper">
+    <insert id="insert">
+        insert into ${tableName}
+        <include refid="base_insert"/>
+    </insert>
+    <sql id="base_insert">
+        <if test="type==0">
+            (item_id,item_content_id,uuid,create_time,is_exit,today_commit_num)
+            values(#{task.itemId},#{task.itemContentId},#{task.uuid},#{task.createTime},1,0)
+        </if>
+        <if test="type==1">
+            (custom_id,uuid,create_time,is_exit,today_commit_num) values(#{task.itemId},#{task.uuid},#{task.createTime},1,0)
+        </if>
+        <if test="type==2">
+            (item_id,user_id,type_id,create_time,percent,is_exist,today_commit_num) values(#{task.itemId},#{task.uuid},10006,#{task.createTime},'0%',1,0)
+        </if>
+    </sql>
+
+
+    <update id="updateBookIsExist">
+        update ${tableName} set is_exist = 1
+        <include refid="base_update"/>
+    </update>
+    <update id="updateIsExist">
+        update ${tableName} set is_exit = 1
+        <include refid="base_update"/>
+    </update>
+    <update id="updateDoneNumByTaskId">
+        update ${tableName}
+        set done_num = done_num - #{num},
+        today_commit_num =
+        <if test="isRemove==1">
+            today_commit_num - #{num}
+        </if>
+        <if test="isRemove==0">
+            today_commit_num
+        </if>
+
+        where
+        <if test="type==2">
+            index_id = #{taskId}
+        </if>
+        <if test="type!=2">
+            task_id = #{taskId}
+        </if>
+    </update>
+    <update id="updateStateByPrimaryKey">
+        update ${tableName}
+        <if test="type==2">
+            set is_exist = #{state} where index_id = #{taskId}
+        </if>
+        <if test="type!=2">
+            set is_exit = #{state} where task_id = #{taskId}
+        </if>
+    </update>
+    <sql id="base_update">
+        <where>
+            <if test="type==0">
+                and item_id = #{itemId} and item_content_id = #{itemContentId} and uuid = #{uuid}
+            </if>
+            <if test="type==1">
+                and custom_id = #{itemId} and uuid = #{uuid}
+            </if>
+            <if test="type==2">
+                and item_id = #{itemId} and user_id = #{uuid}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="queryCountByItemIdAndItemContentIdAndTableNameAndUuid" resultType="java.lang.Integer">
+        select count(*)
+        from ${tableName}
+        <include refid="base_sql"/>
+    </select>
+    <select id="queryTaskByUuidFromBookCase" resultType="com.hrym.wechat.entity.TaskCommon">
+        select index_id task_id,c.user_id uuid,c.item_id,done_num,(select sum(report_num)
+        from t_task_record_book
+        where FROM_UNIXTIME(report_time,'%Y%m%d') = FROM_UNIXTIME(#{currentSecond},'%Y%m%d')
+        and user_id = c.user_id and item_id = c.item_id and task_id = c.index_id) today_commit_num,
+		b.version_name lesson_name,b.item_content_id,2 as `type`,c.create_time
+        from t_bookcase c
+		left join t_resource_content_book b
+		on b.item_id = c.item_id
+		where user_id = #{userId} and is_exist = 1
+		<if test="taskId!=null"> and c.index_id = #{taskId} </if>
+    </select>
+    <select id="queryTaskByUuidFromView" resultType="com.hrym.wechat.entity.TaskCommon">
+        select task_id, tv.uuid ,tv.item_id,tv.item_content_id,done_num,today_commit_num,
+		lv.lesson_name,lv.type,tv.create_time
+		from t_task_common_view tv
+		left join t_flock_lesson_view lv
+		on lv.item_id = tv.item_id and lv.item_content_id = tv.item_content_id
+		where tv.is_exit = 1 and tv.uuid = #{userId} and lv.item_id is not null
+        <if test="taskId!=null"> and tv.task_id = #{taskId} </if>
+        order by `order` , tv.create_time desc
+    </select>
+    <sql id="base_sql">
+        <where>
+            <if test="type==0">
+                and item_id = #{itemId} and item_content_id = #{itemContentId} and uuid = #{uuid}
+            </if>
+            <if test="type==1">
+                and custom_id = #{itemId} and uuid = #{uuid}
+            </if>
+            <if test="type==2">
+                and item_id = #{itemId} and user_id = #{uuid}
+            </if>
+            <if test="isExist!=null and type==2">
+                and is_exist = ${isExist} and user_id = #{uuid}
+            </if>
+            <if test="isExist!=null and type!=2">
+                and is_exit = ${isExist} and uuid = #{uuid}
+            </if>
+        </where>
+    </sql>
+
+</mapper>

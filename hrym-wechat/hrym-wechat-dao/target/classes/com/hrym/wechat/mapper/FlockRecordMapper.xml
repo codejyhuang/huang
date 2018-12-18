@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.FlockRecordMapper">
+
+    <insert id="insertFlockRecord" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO ${tableName} (parent_id,create_time,uuid,num,ymd,`year`,`month`,lon,lat,item_id,item_content_id,flock_id,`type`)
+        VALUES
+        <foreach collection="list" item="li" separator="," close=";">
+        (#{li.parentId},#{li.createTime},#{li.uuid},#{li.num},from_unixtime(unix_timestamp(now()), '%Y%m%d'),year(CURRENT_DATE),month(CURRENT_DATE),#{li.lon},#{li.lat},#{li.itemId},#{li.itemContentId},#{li.flockId},#{li.type})
+        </foreach>
+    </insert>
+
+    <insert id="insertFlockRecordByFlockId">
+        INSERT INTO ${tableName} (parent_id,create_time,uuid,num,ymd,`year`,`month`,lon,lat,item_id,item_content_id,flock_id,`type`)
+        VALUES(#{record.parentId},#{record.createTime},#{record.uuid},#{record.num},from_unixtime(unix_timestamp(now()), '%Y%m%d'),year(CURRENT_DATE),month(CURRENT_DATE),#{record.lon},#{record.lat},#{record.itemId},#{record.itemContentId},#{record.flockId},#{record.type})
+    </insert>
+    <insert id="insertHistoryFlockRecord">
+        INSERT INTO ${tableName} (parent_id,create_time,uuid,num,ymd,`year`,`month`,lon,lat,item_id,item_content_id,flock_id,`type`)
+        VALUES
+            (#{li.parentId},#{li.createTime},#{li.uuid},#{li.num},from_unixtime(unix_timestamp(now()), '%Y%m%d'),year(CURRENT_DATE),month(CURRENT_DATE),#{li.lon},#{li.lat},#{li.itemId},#{li.itemContentId},#{li.flockId},#{li.type})
+    </insert>
+    <update id="logicRemoveByPrimaryKey">
+        update  ${tableName}
+        set state = 0
+        where parent_id = #{recordId}
+    </update>
+    <update id="updateLikeNumByPrimaryKey">
+        update ${tableName}
+        set like_num = ifnull(like_num,0) + #{count}
+        where id = #{id}
+    </update>
+
+
+    <select id="queryByFlockId" resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select r.id,parent_id,r.create_time,r.uuid,num,r.ymd,`year`,`month`,lon,lat,r.state,r.item_id,r.item_content_id,flock_id,r.type,n.unit
+        ,nickname,avatar
+        from t_flock_record_view r
+        left join t_user_account u
+        on r.uuid = u.uuid
+        left join t_item_user_unit n
+        on r.item_id = n.item_id and r.item_content_id = n.item_content_id and r.type = n.type and n.uuid = #{uuid}
+        where state = 1 and  flock_id = #{id}
+        and
+        <foreach collection="list" item="flockItem" open="(" close=")" separator=" or">
+            <if test="flockItem.type==1">
+                (r.item_id = #{flockItem.itemId})
+            </if>
+            <if test="flockItem.type!=1">
+                (r.item_id = #{flockItem.itemId} and r.item_content_id = #{flockItem.itemContentId} and r.`type` = #{flockItem.type})
+            </if>
+        </foreach>
+        order by create_time desc
+    </select>
+
+    <!--<select id="queryByIds" resultType="com.hrym.wechat.entity.FlockRecordDO">-->
+        <!--SELECT id,flock_id,item_id,item_content_id,uuid,total FROM t_flock_item_user_count-->
+        <!--<where>-->
+            <!--uuid =1 AND flock_id =1 AND -->
+            <!--item_id  in-->
+            <!--<foreach item="item" collection="list" separator="," open="(" close=")" index="">-->
+                <!--#{item.id, jdbcType=NUMERIC}-->
+            <!--</foreach>-->
+           <!--and item_content_id in  <foreach item="item" collection="list" separator="," open="(" close=")" index="">-->
+            <!--#{item.id, jdbcType=NUMERIC}-->
+        <!--</foreach>-->
+         <!--GROUP BY flock_id ORDER BY total desc;-->
+
+        <!--</where>-->
+    <!--</select>-->
+    <select id="queryByFlockIdAndItemIdAndItemContentIdAndType"
+            resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select 	temp.id,`order`,uuid,num,nickname,avatar,like_num,temp.`year`,
+        c.`from` has_like
+        from (select @rownum:=@rownum+1 	`order`,q.* from
+        (
+        select r.id,parent_id,r.create_time,r.uuid,num,r.ymd,`year`,`month`,lon,lat,r.state,item_id,item_content_id,flock_id,r.type,r.like_num
+        ,nickname,avatar
+        from t_flock_record_view r
+        left join t_user_account u
+        on r.uuid = u.uuid
+        where state = 1 and  flock_id = #{flockId}
+        <include refid="base_where"/>
+        order by create_time desc
+        ) q ,(SELECT @rownum:=0) rown) temp
+        left join t_parse_record c
+        on temp.id = c.relation_id and c.from = #{userId}
+    </select>
+    <!--<select id="queryByFlockIdAndItemIdAndItemContentIdAndType"-->
+            <!--resultType="com.hrym.wechat.entity.FlockRecordDO">-->
+
+        <!--select 	id,`order`,uuid,num,nickname,avatar,-->
+        <!--(select count(id) from t_parse_record where relation_type = 0 and relation_id like temp.id and item_id = #{itemId} and content_id = #{itemContentId} and item_type = #{type}) likeNum,-->
+        <!--(select uuid from t_parse_record where relation_type = 0 and `from` = #{userId} and  relation_id like temp.id and item_id = #{itemId} and content_id = #{itemContentId} and item_type = #{type}) has_like-->
+        <!--from (select @rownum:=@rownum+1 	`order`,q.* from-->
+        <!--(-->
+        <!--select r.id,parent_id,r.create_time,r.uuid,num,r.ymd,`year`,`month`,lon,lat,r.state,item_id,item_content_id,flock_id,r.type-->
+        <!--,nickname,avatar-->
+        <!--from t_flock_record_view r-->
+        <!--left join t_user_account u-->
+        <!--on r.uuid = u.uuid-->
+        <!--where state = 1 and  flock_id = #{flockId}-->
+        <!--<include refid="base_where"/>-->
+        <!--order by create_time desc-->
+        <!--) q ,(SELECT @rownum:=0) rown) temp-->
+    <!--</select>-->
+    <select id="queryByFlockIdAndItemIdAndItemContentIdAndTypeGroupBy"
+            resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select r.uuid,sum(num) num,max(create_time) create_time
+        ,nickname,avatar
+        from t_flock_record_view r
+        left join t_user_account u
+        on r.uuid = u.uuid
+        where state = 1 and  flock_id = #{flockId}
+        <include refid="base_sql"/>
+        group by r.uuid
+        order by num desc
+    </select>
+    <select id="queryByFlockIdAndItemIdAndItemContentIdAndTypeAndToday"
+            resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select r.uuid,sum(num) num,max(r.create_time) create_time
+        ,nickname,avatar
+        from ${tableName} r
+        left join t_user_account u
+        on r.uuid = u.uuid
+        where state = 1 and  flock_id = #{flockId} and `ymd` = #{ymd}
+        <include refid="base_where"/>
+        group by r.uuid
+        order by num desc
+    </select>
+    <select id="queryByFlockIdAndItemIdAndItemContentIdAndTypeAndMonthOrYear"
+            resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select r.uuid,sum(num) num,max(r.create_time) create_time
+        ,nickname,avatar
+        from ${tableName} r
+        left join t_user_account u
+        on r.uuid = u.uuid
+        where state = 1 and  flock_id = #{flockId} and `year` = #{year} <if test="month!=null"> and `month` = #{month}</if>
+        <include refid="base_where"/>
+        group by r.uuid
+        order by num desc
+    </select>
+    <select id="queryByIds" resultType="com.hrym.wechat.vo.FlockRecordVo">
+        SELECT y.item_id,y.item_content_id,y.flock_id,y.state,y.type,y.uuid,SUM(y.num) as num,y.create_time,t.nickname,t.avatar FROM ${tableName} y
+        LEFT JOIN t_user_account t ON t.uuid = y.uuid
+        WHERE
+        y.flock_id = #{vo.flockId} and y.create_time BETWEEN #{vo.startTime} and #{vo.endTime}
+        and y.item_id = #{vo.itemId} and y.item_content_id =#{vo.itemContentId} and y.type = #{vo.type} and y.state = 1
+        GROUP BY y.uuid
+        <include refid="year"/>
+    </select>
+
+    <select id="queryByCUstomIds" resultType="com.hrym.wechat.vo.FlockRecordVo">
+        SELECT y.item_id,y.item_content_id,y.flock_id,y.state,y.type,y.uuid,SUM(y.num) as num,y.create_time,t.nickname,t.avatar FROM ${tableName} y
+        LEFT JOIN t_user_account t ON t.uuid = y.uuid
+        WHERE
+        y.flock_id = #{vo.flockId} and y.create_time BETWEEN #{vo.startTime} and #{vo.endTime}
+        and y.item_id = #{vo.itemId} and y.type = #{vo.type} and y.state = 1
+        GROUP BY y.uuid
+        <include refid="year"/>
+    </select>
+    <select id="findCustomSum" resultType="com.hrym.wechat.vo.FlockRecordVo">
+        SELECT SUM(y.num) as num FROM ${tableName} y
+        WHERE
+        y.flock_id = #{vo.flockId} and y.create_time BETWEEN #{vo.startTime} and #{vo.endTime}
+        and y.item_id = #{vo.itemId} and y.type = #{vo.type} and y.state = 1
+        <include refid="year"/>
+    </select>
+    <select id="queryByUuid" resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select 	`order`,uuid,num,avatar,nickname from (select @rownum:=@rownum+1 	`order`,q.* from
+		(
+		select r.uuid,sum(r.num) num,avatar,nickname
+					FROM ${tableName} r
+					left join t_user_account u
+					on u.uuid = r.uuid
+					where r.flock_id = #{flockId} and r.state = 1
+					<include refid="base_term"/>
+					group by r.uuid
+					order by num desc
+		) q ,(select @rownum:=0) rown) temp where temp.uuid = #{uuid}
+    </select>
+    <select id="queryByFlockIdAndItemIdAndItemContentIdAndTimeType"
+            resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select 	`order`,uuid,num,avatar,nickname from (select @rownum:=@rownum+1 	`order`,q.* from
+        (
+        select r.uuid,sum(r.num) num,avatar,nickname
+        FROM ${tableName} r
+        left join t_user_account u
+        on u.uuid = r.uuid
+        where r.flock_id = #{flockId} and r.state = 1
+        <include refid="base_term"/>
+        group by r.uuid
+        order by num desc
+        ) q ,(select @rownum:=0) rown) temp
+    </select>
+    <select id="findLessonSum" resultType="com.hrym.wechat.vo.FlockRecordVo">
+        SELECT SUM(y.num) as num FROM ${tableName} y
+        WHERE
+        y.flock_id = #{vo.flockId} and y.create_time BETWEEN #{vo.startTime} and #{vo.endTime}
+        and y.item_id = #{vo.itemId} and y.item_content_id =#{vo.itemContentId} and y.type = #{vo.type} and y.state = 1
+        <include refid="year"/>
+    </select>
+    <select id="queryItemNum" resultType="java.lang.Double">
+        select sum(num)
+        from ${tableName}
+        where uuid = #{userId}
+        and item_id = #{itemId} and item_content_id = #{itemContentId} and  type = #{type}
+        and state = #{state}
+        <include refid="base_selfCard"/>
+    </select>
+    <select id="queryRecordByItemIdAndItemContentIdAndTypeAndUuid"
+            resultType="com.hrym.wechat.entity.FlockRecordDO">
+        select id,parent_id,num,create_time,is_import,`year`,`type`
+        from t_flock_record_view
+        where item_id = #{itemId} and item_content_id = #{itemContentId} and type = #{type} and state = #{state}
+        and uuid = #{userId}
+    </select>
+
+    <sql id="base_selfCard">
+        <if test="timeType==0">
+            and `ymd` = #{format}
+        </if>
+        <if test="timeType==1">
+            and `month` = #{format}
+        </if>
+    </sql>
+
+    <sql id="base_term">
+        <if test="type==1">
+            and r.type = #{type} and item_id = #{itemId}
+        </if>
+        <if test="type!=1">
+            and r.type = #{type} and item_id = #{itemId} and item_content_id = #{itemContentId}
+        </if>
+        <if test="timeType==1">
+            and r.ymd = #{ymd}
+        </if>
+        <if test="timeType==2">
+            and r.month = #{month}
+        </if>
+        <if test="timeType==3">
+            and r.year = #{year}
+        </if>
+    </sql>
+
+    <sql id="base_sql">
+        <if test="type==1 and timeType==1">
+            and item_id = #{itemId} and r.type = #{type} and `month` = (select max(`month`) from t_flock_record_view where  item_id = #{itemId})
+        </if>
+        <if test="type==1 and timeType==2">
+            and item_id = #{itemId} and r.type = #{type} and `year` = (select max(`year`) from t_flock_record_view where  item_id = #{itemId})
+        </if>
+        <if test="type==1 and timeType==3">
+            and item_id = #{itemId} and r.type = #{type}
+        </if>
+        <if test="type!=1 and timeType==1">
+            and item_id = #{itemId} and item_content_id = #{itemContentId} and r.type = #{type} and `month` = (select max(`month`) from t_flock_record_view where  item_id = #{itemId} and item_content_id = #{itemContentId} and r.type = #{type})
+        </if>
+        <if test="type!=1 and timeType==2">
+            and item_id = #{itemId} and item_content_id = #{itemContentId} and r.type = #{type} and `year` = (select max(`year`) from t_flock_record_view where  item_id = #{itemId} and item_content_id = #{itemContentId} and r.type = #{type})
+        </if>
+        <if test="type!=1 and timeType==3">
+            and item_id = #{itemId} and item_content_id = #{itemContentId} and r.type = #{type}
+        </if>
+    </sql>
+
+    <sql id="base_where">
+        <if test="type==1">
+            and item_id = #{itemId} and r.type = #{type}
+        </if>
+        <if test="type!=1">
+            and item_id = #{itemId} and item_content_id = #{itemContentId} and r.type = #{type}
+        </if>
+    </sql>
+
+    <sql id="year">
+        <if test="year==1">
+            union all
+            SELECT SUM(y.num) as num FROM ${tableName1} y
+            WHERE
+            y.flock_id = #{vo.flockId} and y.create_time BETWEEN #{vo.startTime} and #{vo.endTime}
+            and y.item_id = #{vo.itemId} and y.item_content_id =#{vo.itemContentId} and y.type = #{vo.type} and y.state = 1
+        </if>
+        <if test="year !=1">
+            ORDER BY num desc
+        </if>
+
+    </sql>
+
+
+</mapper>

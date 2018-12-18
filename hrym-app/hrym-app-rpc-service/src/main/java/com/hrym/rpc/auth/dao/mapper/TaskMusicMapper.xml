@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.rpc.auth.dao.mapper.TaskMusicMapper">
+
+
+    <!--为dao接口方法提供sql语句配置 -->
+    <select id="findMusicById" resultType="com.hrym.rpc.app.dao.model.task.TaskMusic">
+        SELECT music_file,music_name,music_subtitle,music_id,music_file_android
+        FROM t_resource_music
+        WHERE item_id=#{itemId}
+        <if test="id!=null">
+            AND item_content_id=#{id}
+        </if>
+    </select>
+
+
+    <!--禅修功课状态-->
+    <select id="findMusicResourceById" resultType="com.hrym.rpc.app.dao.model.task.TaskMusic">
+        SELECT a.music_id,a.music_file,a.music_name,a.music_subtitle,a.version_id,a.voice_down,a.voice_start,b.item_id "taskItem.itemId",r.value "taskSubResource.value",
+        b.item_name "taskItem.itemName",c.down_num "taskSubPlan.downNum",c.sub_task_id "taskSubPlan.subTaskId",d.type_desc "taskType.typeDesc"
+        FROM t_resource_music a
+         LEFT JOIN t_sub_resource r ON a.music_id=r.resource_id
+         LEFT JOIN t_resource_item b ON b.item_id=a.item_id
+         LEFT JOIN t_work_item f ON b.item_id=f.item_id
+         LEFT JOIN t_task_plan e ON e.type_id=f.type_id
+         LEFT JOIN t_task_type d ON d.type_id=e.type_id
+         LEFT JOIN t_task_sub_plan c ON c.item_id=a.item_id and c.task_id=e.task_id
+         WHERE e.task_id=#{taskId} ORDER BY b.update_time DESC
+    </select>
+
+    <!--查询所有音频（通过最新时间排序）-->
+    <select id="findAllMusicOrderByTime" resultType="com.hrym.rpc.app.dao.model.task.TaskMusic">
+        SELECT a.music_id,a.music_name,a.music_file,a.music_subtitle,a.singer,a.album_name,a.music_pic,b.type_id "taskType.typeId"
+        FROM t_resource_music a
+        LEFT JOIN t_work_item b on a.item_id=b.item_id
+        LEFT JOIN t_task_type c ON b.type_id=c.type_id
+        WHERE c.type_id=10008 and a.music_name like '%${filterStr}%' OR c.type_id=10008 and a.album_name like '%${filterStr}%'
+        OR c.type_id=10008 and a.singer like '%${filterStr}%' order by a.push_time DESC
+    </select>
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+</mapper>

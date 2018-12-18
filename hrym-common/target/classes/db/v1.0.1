@@ -1,0 +1,188 @@
+USE hrym
+
+ALTER TABLE `t_task_type` CHANGE COLUMN `order` `sort` int(2) DEFAULT NULL COMMENT '序号';
+
+CREATE TABLE `t_bluetooth` (
+  `bluetooth_id` int(10) NOT NULL COMMENT '蓝牙表id',
+  `bluetooth_address` varchar(300) DEFAULT NULL COMMENT '蓝牙地址',
+  `task_id` int(10) DEFAULT NULL COMMENT '任务id',
+  `item_id` int(10) DEFAULT NULL COMMENT '功课id',
+  `user_id` int(10) DEFAULT NULL COMMENT '用户id',
+  `type_id` int(1) DEFAULT NULL COMMENT '类型id',
+  `start_time` int(11) DEFAULT NULL COMMENT '蓝牙功课开始时间',
+  `report_num` double(16,2) DEFAULT '0.00' COMMENT '上报数量',
+  PRIMARY KEY (`bluetooth_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `t_phone` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `phone` varchar(30) DEFAULT NULL COMMENT '手机号',
+  `name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `code` varchar(30) DEFAULT NULL COMMENT '验证码',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+INSERT INTO `t_phone` VALUES ('1', '18967175653', '马军', '8888'), ('2', '13185065896', '胡刚', '5896'), ('3', '15168392103', '高延保', '8888');
+
+ALTER TABLE `t_task_record` ADD COLUMN `type_id` int(10) AFTER `record_method`;
+===================================================================以上已经添加到正式库================================================================================
+
+//增加功课主页视图20171212
+select (`p`.`start_time` > timestampdiff(SECOND,'1970-1-1 8:0:0',now())) AS `is_start`,`p`.`task_id` AS `task_id`,`p`.`uuid` AS `uuid`,`p`.`plan_target` AS `plan_target`,`p`.`item_id` AS `item_id`,`p`.`unit_type` AS `unit_type`,`p`.`start_time` AS `start_time`,`p`.`plan_period` AS `plan_period`,`p`.`remain_cron` AS `remain_cron`,`p`.`done_num` AS `done_num`,`p`.`last_commit_time` AS `last_commit_time`,`p`.`last_commit_num` AS `last_commit_num`,`p`.`today_commit_num` AS `today_commit_num`,`p`.`counting_method` AS `counting_method`,`p`.`type_id` AS `type_id`,`p`.`thumbs_up_num` AS `thumbs_up_num`,`p`.`item_content_id` AS `item_content_id`,`p`.`auto_done_num` AS `auto_done_num`,`p`.`custom_done_num` AS `custom_done_num`,`p`.`music_id` AS `music_id`,`p`.`is_exit` AS `is_exit`,`p`.`create_time` AS `create_time`,`p`.`update_time` AS `update_time`,`r`.`item_name` AS `item_name`,`r`.`item_intro` AS `item_intro`,`r`.`item_pic` AS `item_pic`,`r`.`title_desc` AS `title_desc`,`c`.`type_name` AS `type_name`,`c`.`type_desc` AS `type_desc`,`r`.`is_support` AS `is_support`,`d`.`custom_id` AS `custom_id`,`d`.`custom_name` AS `custom_name`,`e`.`unit_desc` AS `unit_desc` from ((((`t_task_plan` `p` left join `t_resource_item` `r` on((`p`.`item_id` = `r`.`item_id`))) left join `t_task_type` `c` on((`p`.`type_id` = `c`.`type_id`))) left join `t_custom_item` `d` on((`p`.`custom_id` = `d`.`custom_id`))) left join `t_task_unit` `e` on((`p`.`type_id` = `e`.`unit_type_id`)))
+
+CREATE TABLE `t_bluetooth_version` (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `bluetooth_version` varchar(30) DEFAULT NULL COMMENT '蓝牙版本',
+  `address` varchar(300) DEFAULT NULL COMMENT '下载地址',
+  `create_time` varchar(11) DEFAULT NULL COMMENT '创建时间',
+  `is_update` int(2) DEFAULT NULL COMMENT '0：不更新；1：需要更新',
+  `bluetooth_name` varchar(100) DEFAULT NULL COMMENT '蓝牙名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8
+===========================蓝牙表==============================
+CREATE TABLE `t_bluetooth` (
+  `bluetooth_id` int(10) NOT NULL AUTO_INCREMENT COMMENT '蓝牙表id',
+  `bluetooth_address` varchar(300) DEFAULT NULL COMMENT '蓝牙地址',
+  `bluetooth_password` varchar(50) DEFAULT NULL COMMENT '蓝牙密码',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`bluetooth_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=utf8
+
+===========================蓝牙功课表==============================
+CREATE TABLE `t_bluetooth_task` (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '蓝牙功课表id',
+  `bluetooth_address` varchar(300) DEFAULT NULL COMMENT '蓝牙地址',
+  `task_id` int(10) DEFAULT NULL COMMENT '任务id',
+  `item_id` int(10) DEFAULT NULL COMMENT '功课id',
+  `user_id` int(10) DEFAULT NULL COMMENT '用户id',
+  `type_id` int(1) DEFAULT NULL COMMENT '类型id',
+  `start_time` int(11) DEFAULT NULL COMMENT '蓝牙功课开始时间',
+  `report_num` double(16,2) DEFAULT '0.00' COMMENT '上报数量',
+  `status` int(10) DEFAULT NULL COMMENT '蓝牙状态0 ：未连接；1已连接',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8
+
+
+UPDATE `t_user_account` SET mobile=null,phone_auth_state=0 WHERE source!=0
+
+===========================佛历表==============================
+CREATE TABLE `t_date` (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '日历id',
+  `date_pic` varchar(300) DEFAULT NULL COMMENT '日历图片',
+  `start_time` int(11) DEFAULT NULL COMMENT '日历开始日期',
+  `end_time` int(11) DEFAULT NULL COMMENT '日期结束时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8
+
+
+===========================意见反馈增加用户id字段==============================
+ALTER TABLE `t_feedback` ADD COLUMN `user_id` int(10) DEFAULT NULL COMMENT '用户id' AFTER `feedback_type`;
+
+===================================================================以上已经添加到正式库================================================================================
+
+===========================功课专区表==============================
+CREATE TABLE `t_area` (
+  `area_id` int(10) NOT NULL AUTO_INCREMENT COMMENT '专区id',
+  `area_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '功课标题',
+  `item_id` int(10) DEFAULT NULL COMMENT '功课id',
+  `version` varchar(30) DEFAULT NULL COMMENT '内容版本',
+  `task_target` bigint(16) DEFAULT NULL COMMENT '功课目标',
+  `task_period` int(10) DEFAULT NULL COMMENT '功课期限',
+  `area_type` int(10) DEFAULT NULL COMMENT '专区类型（1：常用功课专区；2：bsa功课专区；3：修行专区；4：热门功课））',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
+  `type_id` int(10) DEFAULT NULL COMMENT '功课类型id',
+  PRIMARY KEY (`area_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='专区功课');;
+
+===========================自定义功课表==============================
+CREATE TABLE `t_custom_item` (
+  `custom_id` int(10) NOT NULL AUTO_INCREMENT COMMENT '自定义功课表主键id',
+  `custom_name` varchar(100) DEFAULT NULL COMMENT '自定义功课名称',
+  `user_id` int(10) DEFAULT NULL COMMENT '用户id',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
+  `type_id` int(10) DEFAULT NULL COMMENT '类型id',
+  PRIMARY KEY (`custom_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='自定义功课表'
+
+ALTER TABLE `t_task_plan` ADD COLUMN `custom_id` int(10) DEFAULT NULL COMMENT '自定义功课id' AFTER `update_time`;
+
+===================================================================以上已经添加到正式库================================================================================
+===========================音频增加music_version字段==============================
+ALTER TABLE `t_resource_music` ADD COLUMN `music_version` int(10) DEFAULT NULL COMMENT '音频版本，1.标准版；2.快速版' AFTER `music_file_android`;
+===================================================================以上已经添加到正式库================================================================================
+
+
+===========================功课增加 voiceCount 字段==============================
+
+CREATE TABLE `t_bluetooth_ios` (
+  `id` int(10) NOT NULL COMMENT '表id',
+  `bluetooth_address` varchar(100) DEFAULT NULL COMMENT '蓝牙地址',
+  `user_id` int(10) DEFAULT NULL COMMENT '用户id',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='蓝牙自动连接'
+
+ ===================================================== 建立后台日志表 ===============================================================
+            CREATE TABLE `t_manage_log` (
+              `log_id` int(10) NOT NULL AUTO_INCREMENT COMMENT '日志表ID',
+              `item_id` int(10) DEFAULT NULL COMMENT '功课ID',
+              `item_content_id` int(10) DEFAULT NULL COMMENT '功课内容ID',
+              `user_id` int(10) DEFAULT NULL COMMENT '登录用户ID',
+              `create_time` int(10) DEFAULT NULL COMMENT '创建时间',
+              `item_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '功课名称',
+              `version_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '功课内容名称',
+              `catalogue_id` int(10) DEFAULT NULL COMMENT '目录ID',
+              `catalogue_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '目录名称',
+              PRIMARY KEY (`log_id`)
+            ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8
+
+update `t_resource_music` set music_file=REPLACE (music_file,'http://www.everglamming.com:8089/','http://upd.everglamming.com:8089/');
+update `t_resource_music` set music_file_android=REPLACE (music_file_android,'http://202.104.112.185:8089/','http://upd.everglamming.com:8089/');
+update `t_resource_music` set music_file=REPLACE (music_file,'http://202.104.112.185:8089/','http://upd.everglamming.com:8089/');
+update `t_resource_music` set music_file_android=REPLACE (music_file_android,'http://www.everglamming.com:8089/','http://upd.everglamming.com:8089/');
+update `t_gongfo_music` set music_file=REPLACE (music_file,'http://202.104.112.185:8089/','http://upd.everglamming.com:8089/');
+update `t_gongfo_music` set music_file=REPLACE (music_file,'http://www.everglamming.com:8089/','http://upd.everglamming.com:8089/');
+update `t_sub_resource` set value=REPLACE (value,'http://www.everglamming.com:8089/','http://upd.everglamming.com:8089/');
+update `t_sub_resource` set value=REPLACE (value,'http://202.104.112.185:8089/','http://upd.everglamming.com:8089/');
+update `t_resource_content` set video_file=REPLACE (video_file,'http://www.everglamming.com:8089/','http://upd.everglamming.com:8089/');
+update `t_resource_content` set video_file=REPLACE (video_file,'http://202.104.112.185:8089/','http://upd.everglamming.com:8089/');
+
+ALTER TABLE `t_bluetooth_task` ADD COLUMN `remind_num` int(10) DEFAULT NULL COMMENT '蓝牙提醒次数' AFTER `status`;
+ALTER TABLE `t_bluetooth_task` ADD COLUMN `currcent_num` int(10) DEFAULT NULL COMMENT '蓝牙临时次数' AFTER `remind_num`;
+
+ALTER TABLE `t_resource_content` ADD COLUMN `voice_count` int(2) DEFAULT NULL COMMENT '语音识别；1：有2：无' AFTER `create_time`, ADD COLUMN `voice_name` varchar(100) DEFAULT NULL COMMENT '语音识别名称' AFTER `voice_count`, ADD COLUMN `voice_dic` varchar(300) DEFAULT NULL COMMENT '语音识别字典文件' AFTER `voice_name`, ADD COLUMN `voice_lm` varchar(300) AFTER `voice_dic`;
+ALTER TABLE `t_resource_item` DROP COLUMN `voice_count`, DROP COLUMN `voice_name`, DROP COLUMN `voice_dic`, DROP COLUMN `voice_lm`;
+ALTER TABLE `t_manage_log` ADD COLUMN `user_name` varchar(100) DEFAULT NULL COMMENT '用户名' AFTER `music_name`;
+ALTER TABLE `hrym`.`t_task_plan` ADD COLUMN `recent_add` int(5) DEFAULT NULL COMMENT '1表示最近添加  0表示已点击过' AFTER `custom_id`;
+
+======================================= 创建许愿表  ===============================================
+CREATE TABLE `t_desire` (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '愿望ID',
+  `desire` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '愿望',
+  `created_time` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8
+
+
+======================================= 创建书架表  ===============================================
+CREATE TABLE `t_feedback` (
+  `idt_feedback` int(11) NOT NULL AUTO_INCREMENT COMMENT '意见反馈ID',
+  `phone` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `content` varchar(1000) COLLATE utf8_bin DEFAULT NULL COMMENT '意见内容',
+  `state` int(11) DEFAULT NULL COMMENT '状态\n0:未处理\n1:已阅读\n2:已处理',
+  `resolution` varchar(1000) COLLATE utf8_bin DEFAULT NULL COMMENT '解决内容',
+  `create_time` int(11) DEFAULT NULL COMMENT '反馈时间',
+  `update_time` int(11) DEFAULT NULL COMMENT '处理时间',
+  `feedback_type` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '反馈类型',
+  `user_id` int(10) DEFAULT NULL COMMENT '用户id',
+  PRIMARY KEY (`idt_feedback`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC COMMENT='意见反馈'
+
+
+===================================================================以上已经添加到正式库================================================================================
+
+

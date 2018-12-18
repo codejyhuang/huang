@@ -1,0 +1,9 @@
+2018-11-05 17:50:20 [ ERROR ] [ RedisUtil.java :113(getJedis)] Get jedis error : redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+2018-11-05 17:50:36 [ ERROR ] [ RedisUtil.java :113(getJedis)] Get jedis error : redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+2018-11-05 17:56:02 [ ERROR ] [ RedisUtil.java :113(getJedis)] Get jedis error : redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+2018-11-05 17:56:35 [ ERROR ] [ RedisUtil.java :113(getJedis)] Get jedis error : redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+2018-11-05 17:57:02 [ ERROR ] [ RedisUtil.java :113(getJedis)] Get jedis error : redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+2018-11-05 17:57:03 [ ERROR ] [ RedisUtil.java :113(getJedis)] Get jedis error : redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+2018-11-05 17:57:04 [ ERROR ] [ RedisUtil.java :113(getJedis)] Get jedis error : redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+2018-11-05 17:57:05 [ ERROR ] [ RedisUtil.java :113(getJedis)] Get jedis error : redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+2018-11-05 17:57:35 [ ERROR ] [ RedisUtil.java :113(getJedis)] Get jedis error : redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool

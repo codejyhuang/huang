@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.AppRecordCommonMapper">
+
+
+    <delete id="removeByPrimaryKey">
+        delete from ${tableName}
+        where
+        record_id = #{parentId}
+    </delete>
+    <select id="queryTaskIdByRecordId" resultType="java.lang.Integer">
+        select task_id
+        from ${tableName}
+        where record_id = #{parentId}
+    </select>
+    <select id="queryByUuidAndItemIdAndItemIdAndTypeAndTableName" resultType="java.lang.Long">
+        select sum(report_num)
+        from ${tableName}
+        where task_id = #{taskId}
+        <include refid="base_selfCard"/>
+    </select>
+    <select id="queryRecordByTaskId" resultType="com.hrym.wechat.entity.AppRecordCommon">
+        select record_id,task_id,user_id,report_num,report_time,`year`,record_method,ymd
+        from ${tableName}
+        where task_id = #{taskId}
+        order by field(record_method,5) desc , report_time desc
+    </select>
+
+
+    <sql id="base_selfCard">
+        <if test="timeType==0">
+            and `ymd` = #{format}
+        </if>
+        <if test="timeType==1">
+            and `month` = #{format}
+        </if>
+        <if test="timeType==2">
+            and `year` = #{format}
+        </if>
+    </sql>
+
+
+</mapper>

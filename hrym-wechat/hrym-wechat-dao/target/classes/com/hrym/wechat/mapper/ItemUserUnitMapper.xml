@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hrym.wechat.mapper.ItemUserUnitMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into t_item_user_unit(item_id,item_content_id,unit,intro,uuid,type)
+        values(#{itemId},#{itemContentId},#{unit},#{intro},#{uuid},#{type})
+    </insert>
+    <update id="updateItemUserUnitById">
+        UPDATE t_item_user_unit SET
+            <if test="unit!=null">
+                unit = #{unit},
+            </if>
+            <if test="intro!=null">
+                intro =#{intro},
+            </if>
+                update_time=#{updateTime}
+        where uuid = #{uuid} and `type` = #{type}
+        <include refid="base_sql"/>
+    </update>
+
+    <select id="queryUnitByUuidAndItemIdAndItemContentIdAndType" resultType="string">
+        select unit from t_item_user_unit
+        where uuid = #{uuid} and `type` = #{type}
+        <include refid="base_sql"/>
+    </select>
+    <select id="queryItemUserUnit" resultType="com.hrym.wechat.entity.ItemUserUnit">
+        SELECT id,item_id,item_content_id,intro,uuid,unit FROM t_item_user_unit
+        WHERE uuid = #{uuid} and `type` = #{type}
+        <include refid="base_sql"/>
+    </select>
+
+    <sql id="base_sql">
+        <if test="type==1">
+            and item_id = #{itemId}
+        </if>
+        <if test="type!=1">
+            and item_id = #{itemId} and item_content_id = #{itemContentId}
+        </if>
+    </sql>
+</mapper>

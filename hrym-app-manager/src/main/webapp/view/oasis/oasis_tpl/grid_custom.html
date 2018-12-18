@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+<title>表格定制</title>
+<link type="text/css" rel="stylesheet" href="../css/oasis.css" >
+<link type="text/css" rel="stylesheet" href="../css/oasis-icon.css" >
+</head>
+
+<body class="oas-grid-custom">
+<div id="oas-container">
+	<div id="oas-hd"></div>
+	<div id="oas-bd">
+		<div class="oas-tabs styleC">
+			<span class="tabs-tab current" attr-area="show-custom">列显示定制</span>
+			<span class="tabs-tab" attr-area="order-custom">列排序定制</span>
+		</div>
+		
+		<!--展示列定制区域-->
+		<div class="show-custom">
+			<div class="oas-alert">
+				<i class="oasicon oasicon-tip"></i>
+				<span class="oas-impInfo">蓝色为已经显示的列</span>
+				<span class="oas-assist">，直接点选可切换列的显示或隐藏状态。</span>
+			</div>
+			
+			<div class="more-info clearfix">
+				<div class="oas-grid-custom-assist">以下为可定制的列，共<span class="oas-impInfo num">11</span>列，已选<span class="oas-impInfo num">5</span>列<span class="oas-assist">（最佳显示为<span class="num">6-9</span>列）</span></div>
+
+				<div class="more-opts">
+					<a href="javascript:;" class="oas-btn" id="selectAll">全部选择</a>
+					<a href="javascript:;" class="oas-btn" id="selectNull">全部取消</a>
+					<a href="javascript:;" class="oas-btn" id="restore">默认设置</a>
+				</div>
+			</div>
+			
+
+			<div class="oas-grid-custom-content">
+				<ul class="clearfix">
+				</ul>
+			</div>
+		</div>
+
+
+		<!--列顺序定制区域-->
+		<div class="order-custom" style="display:none;">
+			<div class="oas-alert">
+				<i class="oasicon oasicon-tip"></i>
+				<span class="oas-impInfo">当前展示为已经显示的列</span>
+				<span class="oas-assist">，拖动可以排列展示的前后顺序。</span>
+			</div>
+
+			<div class="oas-grid-custom-order">
+				<ul class="clearfix">
+				</ul>
+			</div>
+		</div>
+
+		<div class="buttons">
+			<a href="javascript:;" class="oas-btn oas-recommend" id="save">保存定制结果</a>
+			<a href="javascript:;" class="oas-btn" id="cancel">取消</a>
+		</div>
+	</div>
+	<div id="oas-ft"></div>
+</div>
+</body>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../js/oasis.js"></script>
+<script type="text/javascript" id="oasis-ued-js">
+	var GridCustom = function (options) {
+		this.customCol = options.customCol;
+		this.defaultCol = options.defaultCol;
+		this.head = options.head;
+
+		this.init();
+	}
+
+	GridCustom.prototype = {
+		constructor: GridCustom,
+
+		tpl: template.compile('{{each col}}<li id="{{$value.id}}" class="oas-grid-custom-col{{if $value.selected}} oas-current{{/if}}" name="{{$value.name}}" label="{{$value.label}}">{{$value.value}}</li>{{/each}}'),
+
+		orderTpl: template.compile('{{each col}}<li class="oas-grid-custom-col oas-current" name="{{$value.name}}" label="{{$value.label}}">{{$value.label}}</li>{{/each}}'),
+
+
+		/*
+		 *  更新数据 
+		 */
+		_update: function(){
+			var currentCustom = [],
+				customCol = this.customCol,
+				newCustomCol = [];
+		
+			$.each($('.oas-grid-custom-content .oas-grid-custom-col'), function(){
+				if($(this).hasClass('oas-current')){
+
+					currentCustom.push({
+						label: $(this).attr('label'),
+						name: $(this).attr('name')
+					});
+				}
+			});
+
+
+			if(customCol.length <  currentCustom.length){
+				// for(var i = 0, len = currentCustom.length; i < len; i++){
+				// 	if(this._inArray(currentCustom[i], newCustomCol)){
+				// 		continue;
+				// 	}
+				// 	newCustomCol.push(currentCustom[i]);
+				// }
+				// for(var i = 0, len = customCol.length; i < len; i++){
+					
+				// 	if(this._inArray(customCol[i], currentCustom)){
+				// 		newCustomCol.push(customCol[i]);
+				// 	}
+				// }
+
+				this.customCol = currentCustom;
+				
+			}else{
+
+				for(var i = 0, len = customCol.length; i < len; i++){
+					
+					if(this._inArray(customCol[i], currentCustom)){
+						newCustomCol.push(customCol[i]);
+					}
+				}
+
+				this.customCol = newCustomCol;
+			}
+
+			$('.oas-grid-custom-assist').find('.num').eq(0).text(this.head.length).end().eq(1).text(this.customCol.length);
+		},
+
+		_inArray: function(target, array){
+			for(var i = 0, len = array.length; i < len; i++){
+				if(array[i].name === target.name){
+					return true;
+				}
+			}
+
+			return false;
+		},
+
+		/*
+         * 生成渲染数据。
+		 */
+		_prodCol: function(customCol){
+
+			var dCustom = [],
+				head = this.head;
+			dCustom = $.extend(true, dCustom, head);
+
+			for(var i = 0,len = dCustom.length; i < len; i++){
+				var h = dCustom[i];
+
+				h.value = (h.label.indexOf('<') !== -1) ? $(h.label).text() : h.label;
+				for(var j = 0, jLen = customCol.length; j < jLen; j++){
+
+					if(h.name === customCol[j].name){
+						h.selected = true;
+					}
+				}
+				
+
+				h.id = window.esc.toValidId(h.name);
+			}
+
+			return dCustom;
+
+		},
+
+		// 过滤一个数组
+ 		_filterArr: function(arr) {
+ 			for (var i = 0, len = arr.length; i < len; i++) {
+ 				oasis.erase(false, arr);
+ 			}
+
+ 		},
+
+
+		init: function(){
+
+			var _renderData = {
+				col: this._prodCol(this.customCol)
+			}
+
+			var html = this.tpl(_renderData);
+			$('.oas-grid-custom-content').find('ul').empty().html(html);
+			$('.oas-grid-custom-assist').find('.num').eq(0).text(this.head.length).end().eq(1).text(this.customCol.length);
+
+			this._bindEvent();
+
+			//$('.oas-grid-customVO-col').removeClass('oas-current');
+
+			//update();
+		},
+
+		_bindEvent: function(){
+			var self = this;
+
+			// 绑定tab卡事件
+			$('.oas-tabs').on('click', '.tabs-tab', function(){
+				var attrArea = $(this).attr('attr-area');
+				$('.show-custom, .order-custom').hide();
+				$('.' + attrArea).show();
+				if(attrArea === 'order-custom'){
+					self._showOrder();
+				}
+				
+			});
+
+
+			$('.oas-grid-custom-content').on('click.oas-grid-custom', 'li', function(e) {
+				$(this).toggleClass('oas-current');
+
+				self._update();
+			});
+
+			// 保存定制结构
+			$('#save').click(function(){
+
+				if(!!!$('.oas-current').size()){
+					OasMsg.open({
+						type:"warning",
+						message: '最少需要选择一列完成定制'
+					});
+					return;
+				}
+				window.issave = true;
+
+				window.currentCustom = self.customCol;
+
+				// 循环找出选中的
+				OasShyPage.close();
+			});
+
+
+			// 选择所有
+			$('#selectAll').click(function(){
+				$('.oas-grid-custom-content .oas-grid-custom-col').addClass('oas-current');
+				self._update();
+			});
+
+			// 取消全部
+			$('#selectNull').click(function(){
+				$('.oas-grid-custom-content  .oas-grid-custom-col').removeClass('oas-current');
+				self._update();
+			});
+
+			// 取消
+			$('#cancel').click(function(){
+				OasShyPage.close();
+			});
+
+			// 还原默认
+			$('#restore').click(function(){
+				var _renderData = {
+					col: self._prodCol(self.defaultCol)
+				}
+
+				var html = self.tpl(_renderData);
+				$('.oas-grid-custom-content').find('ul').empty().html(html);
+				self.customCol = self.defaultCol;
+				$('.oas-grid-custom-assist').find('.num').eq(1).text(self.customCol.length);
+				//self._update();
+			});
+		},
+
+		_showOrder: function(){
+			var self = this;
+
+			var _renderData = {
+				col: this.customCol
+			}
+
+			var html = this.orderTpl(_renderData);
+			$('.oas-grid-custom-order').find('ul').empty().html(html);
+
+			if(!!$(':oasSortable').size()){
+				$(':oasSortable').oasSortable('destory');
+			}
+
+			$('.oas-grid-custom-order').find('ul').oasSortable({
+				type: 'shove',
+				onChange: function(){
+					var customCol = self.customCol = []
+
+					$.each($('.oas-grid-custom-order .oas-grid-custom-col').not('.oas-drag-proxy'), function(){
+
+						customCol.push({
+							label: $(this).attr('label'),
+							name: $(this).attr('name')
+						});
+					});
+
+
+					this.customCol = customCol;
+				}
+			});
+		}
+	};
+
+
+	function init(){
+		gridCustom = null;
+		var gridCustom = new GridCustom({
+			customCol: customCol,
+			defaultCol: defaultCol,
+			head: head
+		});
+	}
+</script>
+</html>
